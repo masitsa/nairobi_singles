@@ -1,0 +1,1 @@
+<p class="pull-left"> Showing <strong><?php echo $last; if($last == 1){$dis = 'message';} else{$dis = 'messages';}?></strong> <?php echo $dis;?> </p>

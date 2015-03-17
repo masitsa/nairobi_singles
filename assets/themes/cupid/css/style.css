@@ -1,0 +1,73 @@
+/***** 1. General *****/
+/*@import url(http://fonts.googleapis.com/css?family=Josefin+Slab:400,600);
+body{font-family: 'Josefin Slab', serif; font-size:2em;}*/
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500,700);
+body{font-family: 'Ubuntu', sans-serif; font-size:2em;}
+h1, h2, h3, h4, h5, h6{color: #F5F5F5; font-weight:bold;}
+.center-align{margin: 0 auto; text-align:center;}
+.pull-left{float: left;}
+.pull-right{float: right;}
+a{color: #F5F5F5;}
+
+/* Form Elements */
+.form-horizontal{padding:0 0 20px 0;}
+.form-control{border:none; border-radius:0px;border: 2px solid #ccc; background-color:#ffffff; color:#404040;}
+.form-horizontal .alert-danger{background-color: #F2DEDE; border-color: #EBCCD1; color: #A94442;}
+.form-control::-webkit-input-placeholder {color: #55A4DA; font-style:italic;}
+ /* Firefox 18- */
+.form-control:-moz-placeholder {color: #55A4DA; font-style:italic;}
+/* Firefox 19+ */
+.form-control::-moz-placeholder {color: #55A4DA; font-style:italic;}
+.form-control:-ms-input-placeholder {color: #55A4DA; font-style:italic;}
+.form-control:focus{border-color:#55A4DA; box-shadow:none;}
+
+.form-horizontal .alert-danger::-webkit-input-placeholder {color: #A94442;}
+ /* Firefox 18- */
+.form-horizontal .alert-danger:-moz-placeholder {color: #A94442;}
+/* Firefox 19+ */
+.form-horizontal .alert-danger::-moz-placeholder {color: #A94442;}
+.form-horizontal .alert-danger:-ms-input-placeholder {color: #A94442;  }
+.form-horizontal .alert-danger:focus{box-shadow:none;}
+
+textarea{min-height:110px;}
+.form-group span.info{color:#55A4DA; font-style:italic; font-size:0.8em;}
+.required{color:#e7302a; font-size:0.8em;}
+
+.checkbox label {font-size: 0.6em; text-align: justify;}
+.form-group {margin-bottom: 10px;}
+
+/* Buttons */
+.btn{border:none; border-radius:0px; color:#fff;}
+.btn-default, .btn:visited{background-color: #F5F5F5; color: #fff;}
+.btn:hover, .btn:active{background: rgba(250, 105, 0, .75); color: #fff;}
+
+/***** 2. Home Page *****/
+
+/*** a) Sign in ***/
+.nav-sign-in span {float: left; line-height: 36px; padding-right: 20px;}
+.nav-sign-in a { border-color: #4879C1; display: inline-block; float: right; width: 86px;}
+
+/*** b) Logo ***/
+.home-content{background:#d90000 url(../../../images/nairobi_skyline.png) no-repeat; background-position:bottom; width:100%; min-height: 372px; padding-top:1em;}
+.home-content h1, .home-content h2{margin: 0 auto; text-align:center;}
+.home-content h1{font-size:3em;}
+.home-content h2{margin-top: 2%;}
+
+/*** c) Sign up ***/
+.sign-up-form{font-size: 1.5em;}
+.sign-up-form .bootstrap-select > .btn {height: 60px;font-size: 0.8em;}
+.sign-up-form .bootstrap-select > .btn, .sign-up-form .btn-default{font-size: 0.8em;}
+.btn-default {height: 61px; width: 150px;}
+
+/*** d) Sign in ***/
+.home-content .form-horizontal .btn{background-color: #F5F5F5;font-size: 1.1em;font-weight: normal;width: 100%;}
+.home-content .form-horizontal .form-control{height: 40px;}
+.fileinput .thumbnail > img {width: 100%;}
+
+.home-sign-up .btn-default{background-color:#ccc; color:#969696;}
+.home-sign-up .btn-primary{background-color:#d90000;}
+.home-content .pull-right .btn-primary{background-color:#d90000; border: 1px solid #fff;}
+.home-content span{color: #fff;}
+.home-sign-up li a span{color: #969696;}
+.home-sign-up .join-button{width:100%; font-size:1.5em; height:50px;}
+.cupid{color: #d90000;}
