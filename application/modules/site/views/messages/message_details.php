@@ -33,7 +33,7 @@
 						$sender = $message_data->client_id;
 						$receiver = $message_data->receiver_id;
 						$created = $message_data->created;
-						$client_message_details = $message_data->client_message_details;
+						$client_message_details = $this->profile_model->convert_smileys($message_data->client_message_details, $smiley_location);
 						
 						//if I am the one receiving align left
 						if($receiver == $client_id)
@@ -42,7 +42,7 @@
 							'
 								<div class="row">
 									<div class="col-md-2">
-										<img src="'.$receiver_thumb.'" class="img-responsive">
+										<img src="'.$receiver_thumb.'" class="img-responsive profile-image">
 									</div>
 									
 									<div class="col-md-8 col-md-offset-2 bubble-left">
@@ -64,7 +64,7 @@
 										<div class="message-date pull-right">'.date('jS M Y H:i a',strtotime($created)).'</div>
 									</div>
 									<div class="col-md-2">
-										<img src="'.$client_thumb.'" class="img-responsive">
+										<img src="'.$client_thumb.'" class="img-responsive profile-image">
 									</div>
 								</div>
 							';

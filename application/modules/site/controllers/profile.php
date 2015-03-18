@@ -39,12 +39,13 @@ class Profile extends account
 	public function about_you()
 	{
 		//initialize required variables
-		$v_data['profile_image_location'] = 'http://placehold.it/300x300&text=Upload+image';
+		$v_data['profile_image_location'] = 'http://placehold.it/300x200&text=Upload+image';
 		$v_data['neighbourhood_id_error'] = '';
 		$v_data['client_about_error'] = '';
 		$v_data['client_dob1_error'] = '';
 		$v_data['client_dob2_error'] = '';
 		$v_data['client_dob3_error'] = '';
+		$v_data['gender_id_error'] = '';
 		$v_data['client_looking_gender_id_error'] = '';
 		$v_data['age_group_id_error'] = '';
 		$v_data['encounter_id_error'] = '';
@@ -71,6 +72,7 @@ class Profile extends account
 		$this->form_validation->set_rules('client_looking_gender_id', 'Looking for', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('age_group_id', 'Aged', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('encounter_id', 'Encounter type', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('gender_id', 'Gender', 'trim|required|xss_clean');
 		
 		//if form conatins invalid data
 		if ($this->form_validation->run())
@@ -100,6 +102,7 @@ class Profile extends account
 			$v_data['client_dob1_error'] = form_error('client_dob1');
 			$v_data['client_dob2_error'] = form_error('client_dob2');
 			$v_data['client_dob3_error'] = form_error('client_dob3');
+			$v_data['gender_id_error'] = form_error('gender_id');
 			$v_data['client_looking_gender_id_error'] = form_error('client_looking_gender_id');
 			$v_data['age_group_id_error'] = form_error('age_group_id');
 			$v_data['encounter_id_error'] = form_error('encounter_id');
@@ -113,6 +116,8 @@ class Profile extends account
 			$v_data['client_dob1'] = set_value('client_dob1');
 			$v_data['client_dob2'] = set_value('client_dob2');
 			$v_data['client_dob3'] = set_value('client_dob3');
+			$v_data['gender_id'] = set_value('gender_id');
+			$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
 		}
 		
 		//populate form data on initial load of page
@@ -134,7 +139,8 @@ class Profile extends account
 			{
 				$v_data['neighbourhood_id'] = '';
 				$v_data['client_about'] = '';
-				$v_data['client_looking_gender_id'] = $this->session->userdata('client_looking_gender_id');
+				$v_data['gender_id'] = "";
+				$v_data['client_looking_gender_id'] = "";
 				$v_data['age_group_id'] = '';
 				$v_data['encounter_id'] = '';
 				$v_data['client_dob1'] = '';
@@ -150,7 +156,7 @@ class Profile extends account
 		$data['content'] = $this->load->view('register/about_you', $v_data, true);
 		
 		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		$this->load->view('site/templates/home_page', $data);
 	}
 	
 	public function like_profile($like_id)
@@ -187,7 +193,9 @@ class Profile extends account
 	}
 	
 	public function send_message($receiver_id, $page = NULL)
-	{//var_dump($page);die();
+	{
+		$v_data['smiley_location'] = $this->smiley_location;
+		
 		$v_data['receiver'] = $this->profile_model->get_client($receiver_id);
 		$v_data['sender'] = $this->profile_model->get_client($this->client_id);
 		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
@@ -215,11 +223,16 @@ class Profile extends account
 			$data['account_balance'] = $this->payments_model->get_account_balance($this->session->userdata('client_id'));
 			
 			echo json_encode($data);
-			//echo $this->load->view('account/modal_messages', $v_data, true);
 		}
 		
 		else
 		{
+			//for smileys
+			$image_array = get_clickable_smileys($this->smiley_location, 'instant_message');
+			$col_array = $this->table->make_columns($image_array, 12);
+			
+			$v_data['smiley_table'] = $this->profile_model->generate_emoticons($col_array);
+			
 			echo $this->load->view('account/message', $v_data, true);
 		}
 	}
@@ -316,11 +329,13 @@ class Profile extends account
 		$v_data['client_looking_gender_id_error'] = '';
 		$v_data['age_group_id_error'] = '';
 		$v_data['encounter_id_error'] = '';
+		$v_data['gender_id_error'] = '';
 				
 		$client_query = $this->profile_model->get_client($this->client_id);
 		$row = $client_query->row();
 		$v_data['profile_image_location'] = $this->profile_image_location.$row->client_image;
 		$v_data['neighbourhood_id'] = $row->neighbourhood_id;
+		$v_data['gender_id'] = $row->gender_id;
 		$v_data['client_about'] = $row->client_about;
 		$v_data['client_looking_gender_id'] = $row->client_looking_gender_id;
 		$v_data['age_group_id'] = $row->age_group_id;
@@ -350,6 +365,7 @@ class Profile extends account
 		$this->form_validation->set_rules('client_dob2', 'Month of birth', 'trim|required|greater_than[0]|less_than[13]|xss_clean');
 		$this->form_validation->set_rules('client_dob3', 'Year of birth', 'trim|required|greater_than[1900]|xss_clean');
 		$this->form_validation->set_rules('client_looking_gender_id', 'Looking for', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('gender_id', 'I am a', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('age_group_id', 'Aged', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('encounter_id', 'Encounter type', 'trim|required|xss_clean');
 		
@@ -379,6 +395,7 @@ class Profile extends account
 			$v_data['client_dob2_error'] = form_error('client_dob2');
 			$v_data['client_dob3_error'] = form_error('client_dob3');
 			$v_data['client_looking_gender_id_error'] = form_error('client_looking_gender_id');
+			$v_data['gender_id'] = form_error('gender_id');
 			$v_data['age_group_id_error'] = form_error('age_group_id');
 			$v_data['encounter_id_error'] = form_error('encounter_id');
 			
@@ -386,6 +403,7 @@ class Profile extends account
 			$v_data['neighbourhood_id'] = set_value('neighbourhood_id');
 			$v_data['client_about'] = set_value('client_about');
 			$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
+			$v_data['gender_id'] = set_value('gender_id');
 			$v_data['age_group_id'] = set_value('age_group_id');
 			$v_data['encounter_id'] = set_value('encounter_id');
 			$v_data['client_dob1'] = set_value('client_dob1');

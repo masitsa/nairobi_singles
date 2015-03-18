@@ -161,6 +161,7 @@ class Profile_model extends CI_Model
 			   'client_dob'				=> $this->input->post('client_dob3').'-'.$this->input->post('client_dob2').'-'.$this->input->post('client_dob1'),
 			   'neighbourhood_id'		=> $this->input->post('neighbourhood_id'),
 			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id'),
+			   'gender_id'				=> $this->input->post('gender_id'),
 			   'age_group_id'			=> $this->input->post('age_group_id'),
 			   'encounter_id'			=> $this->input->post('encounter_id'),
 			   'client_image'			=> $client_image,
@@ -538,5 +539,31 @@ class Profile_model extends CI_Model
 		}
 		
 		return $count;
+	}
+	
+	public function generate_emoticons($col_array)
+	{
+		//get total rows
+		$total_rows = count($col_array);
+		$grid = '<div class="row">';
+		
+		//create grid
+		for($r = 0; $r < $total_rows; $r++)
+		{
+			for($s = 0; $s < $total_rows; $s++)
+			{
+				$grid .= '<div class="col-md-1">'.$col_array[$r][$s].'</div>';
+			}
+		}
+		
+		$grid .= '</div>';
+		
+		return $grid;
+	}
+	
+	public function convert_smileys($str, $smiley_location)
+	{
+		$str = parse_smileys($str, $smiley_location);
+		return $str;
 	}
 }

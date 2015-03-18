@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
 <file name="admin_login.php" server="148.251.2.43/public_html/clothes/" local="130495673281415031" remote="130520575200000000" Dst="0" />
-<file name="client_signin.php" server="192.186.246.118/public_html/development/" local="130708076948863200" remote="130707716400000000" Dst="0" />
-<file name="client_signup.php" server="192.186.246.118/public_html/development/" local="130708070426880164" remote="130707711600000000" Dst="0" />
+<file name="client_signin.php" server="192.186.246.118/public_html/development/" local="130710879638574377" remote="130710520200000000" Dst="0" />
+<file name="client_signup.php" server="192.186.246.118/public_html/development/" local="130710851443211695" remote="130710493800000000" Dst="0" />
+<file name="admin_login.php" server="192.186.246.118/public_html/development/" local="130495673281415031" remote="130710489000000000" Dst="0" />
+<file name="reset_password.php" server="192.186.246.118/public_html/development/" local="130710859056017123" remote="130710520200000000" Dst="0" />
 </dwsync>

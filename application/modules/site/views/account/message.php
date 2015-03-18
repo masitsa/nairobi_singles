@@ -38,6 +38,7 @@
     <div class="form-group login-username">
         <div >
             <textarea name="client_message_details" id="instant_message" class="form-control input"  size="20" placeholder="Enter message" required="required"></textarea>
+            <?php echo $smiley_table; ?>
         </div>
     </div>
     

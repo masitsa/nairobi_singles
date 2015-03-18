@@ -38,3 +38,4 @@
 <!-- include pace script for automatic web page progress bar  -->
 <script src="<?php echo base_url()."assets/themes/tshop/";?>js/pace.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>assets/themes/tshop/js/jquery/1.8.3/jquery.js"></script>
+<?php echo smiley_js(); ?>

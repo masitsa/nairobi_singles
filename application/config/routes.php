@@ -63,13 +63,14 @@ $route['messages/inbox/(:any)'] = 'site/messages/view_message/$1';
 $route['credits'] = 'site/subscription/subscribe';
 $route['payment'] = 'site/subscription/payment';
 
+$route['forgot-password'] = 'login/forgot_password';
+
 /*
 *	Sign up Routes
 */
 $route['sign-in'] = 'login/login_client';
 $route['sign-out'] = 'login/logout_user';
-$route['sign-up'] = 'login/register_user_type';
-$route['sign-up/account'] = 'login/register_user';
+$route['join'] = 'login/register_user';
 $route['register/about-you'] = 'site/profile/about_you';
 $route['my-profile'] = 'site/profile/edit_profile';
 
