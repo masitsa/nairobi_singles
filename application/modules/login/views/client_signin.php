@@ -14,6 +14,8 @@
                 	<h2>Sign in</h2>
                 </div>
             </div>
+            
+            <div class="center-align">
             <?php
 					//error messages
 					if($this->session->userdata('error_message'))
@@ -41,7 +43,7 @@
 						<?php
 					}
 				?>
-            
+            </div>
         	<!-- Sign in -->
             <div class="row">
                 <div class="col-md-12">

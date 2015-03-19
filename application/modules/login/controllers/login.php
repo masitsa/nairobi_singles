@@ -160,6 +160,10 @@ class Login extends MX_Controller {
 			else
 			{
 				$this->session->set_userdata('error_message', 'The email or password provided is incorrect. Please try again');
+				
+				//repopulate fields
+				$v_data['client_password'] = set_value('client_password');
+				$v_data['client_email'] = set_value('client_email');
 			}
 		}
 		else
