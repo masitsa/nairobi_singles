@@ -6,6 +6,8 @@ class Login extends MX_Controller {
 	{
 		parent:: __construct();
 		$this->load->model('login_model');
+		$this->load->model('site/email_model');
+		$this->load->library('Mandrill', $this->config->item('mandrill_key'));
 	}
     
 	/*
@@ -54,14 +56,6 @@ class Login extends MX_Controller {
 		redirect('home');
 	}
 	
-	public function register_user_type()
-	{
-		$this->session->set_userdata('gender_id', $this->input->post('gender_id'));
-		$this->session->set_userdata('client_looking_gender_id', $this->input->post('client_looking_gender_id'));
-		
-		redirect('sign-up/account');
-	}
-	
 	public function register_user()
 	{
 		$v_data['client_username_error'] = '';
@@ -85,8 +79,6 @@ class Login extends MX_Controller {
 				if($this->login_model->validate_client())
 				{
 					$this->session->set_userdata('success_message', 'You have successfully created your account. We need some info from you so that we can link you with people looking for you.');
-					$this->session->unset_userdata('gender_id');
-					//$this->session->unset_userdata('client_looking_gender_id');
 					redirect('register/about-you');
 				}
 				else
@@ -197,6 +189,67 @@ class Login extends MX_Controller {
 		$data['content'] = $this->load->view('client_signin', $v_data, true);
 		
 		$data['title'] = 'Sign in';
+		$this->load->view('site/templates/home_page', $data);
+	}
+    
+	/*
+	*
+	*	Action of a forgotten password
+	*
+	*/
+	public function forgot_password()
+	{
+		$v_data['client_email_error'] = '';
+		
+		//form validation rules
+		$this->form_validation->set_error_delimiters('', '');
+		$this->form_validation->set_rules('client_email', 'Email', 'required|xss_clean|valid_email|exists[client.client_email]');
+		$this->form_validation->set_message('exists', 'That email does not exist. Are you trying to sign up?');
+		
+		//if form has been submitted
+		if ($this->form_validation->run())
+		{
+			$this->load->model('email_model');
+			
+			//reset password
+			if($this->login_model->reset_client_password())
+			{
+				$this->session->set_userdata('success_message', 'Your password has been reset and mailed to '.$this->input->post('client_email').'. Please use that password to sign in here');
+				
+				redirect('sign-in');
+			}
+			
+			else
+			{
+				$this->session->set_userdata('error_message', 'Could not add a new user. Please try again.');
+			}
+		}
+		
+		else
+		{
+			$validation_errors = validation_errors();
+			
+			//repopulate form data if validation errors are present
+			if(!empty($validation_errors))
+			{
+				//create errors
+				$v_data['client_email_error'] = form_error('client_email');
+				
+				//repopulate fields
+				$v_data['client_email'] = set_value('client_email');
+			}
+			
+			//populate form data on initial load of page
+			else
+			{
+				$v_data['client_email'] = "";
+			}
+		}
+		
+		//page datea
+		$data['content'] = $this->load->view('reset_password', $v_data, true);
+		
+		$data['title'] = 'Forgot password';
 		$this->load->view('site/templates/home_page', $data);
 	}
 }

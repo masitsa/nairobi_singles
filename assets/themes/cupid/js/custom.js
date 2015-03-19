@@ -38,6 +38,15 @@
 	$(".prev2").click(function(){
 		owl2.trigger('owl.prev');
 	})
+});
+
+$(window).scroll(function () {
+
+    if ($(window).scrollTop() + $(window).height() > $('.footer').offset().top) {
+        //alert("footer visible");
+    } else {
+        //alert("footer invisible");
+    }
 });*/
 
 $("input.alert-danger").change(function() {
@@ -56,14 +65,5 @@ $("a.cbp-vm-grid").click(function() {
 $("a.cbp-vm-list").click(function() {
 	$('.list-title').css('display', 'block');
 	$('.grid-title').css('display', 'none');
-});
-
-$(window).scroll(function () {
-
-    if ($(window).scrollTop() + $(window).height() > $('.footer').offset().top) {
-        //alert("footer visible");
-    } else {
-        //alert("footer invisible");
-    }
 });
 

@@ -106,8 +106,8 @@ class Login_model extends CI_Model
 			   'client_email'				=> strtolower($this->input->post('client_email')),
 			   'created'     				=> date('Y-m-d H:i:s'),
 			   'client_password'			=> md5($this->input->post('client_password')),
-			   'gender_id'					=> $this->session->userdata('gender_id'),
-			   'client_looking_gender_id'	=> $this->session->userdata('client_looking_gender_id')
+			   'gender_id'					=> $this->input->post('gender_id'),
+			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id')
 		   );
 
 		if($this->db->insert('client', $newdata))
@@ -179,5 +179,61 @@ class Login_model extends CI_Model
 		$result = $query->row();
 		
 		return $result->total_orders;
+	}
+	
+	/*
+	*	Retrieve a single user by their email
+	*	@param int $email
+	*
+	*/
+	public function get_user_by_email($email)
+	{
+		//retrieve all users
+		$this->db->where('client_email', $email);
+		$query = $this->db->get('client');
+		
+		return $query;
+	}
+	
+	public function reset_client_password()
+	{
+		$email = $this->input->post('client_email');
+		//reset password
+		$result = md5(date("Y-m-d H:i:s"));
+		$pwd2 = substr($result, 0, 6);
+		$pwd = md5($pwd2);
+		
+		$data = array(
+				'client_password' => $pwd
+			);
+		$this->db->where('client_email', $email);
+		
+		if($this->db->update('client', $data))
+		{
+			//email the password to the user
+			$user_details = $this->get_user_by_email($email);
+			
+			$user = $user_details->row();
+			$user_name = $user->client_username;
+			
+			$cc = NULL;
+			$name = $user_name;
+			
+			$subject = 'You requested a password reset';
+			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password.</p>';
+			
+			$button = '<p><a class="mcnButton " title="Sign in" href="'.site_url().'sign-in" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Sign in</a></p>';
+			$shopping = '<p>If you have any queries or concerns do not hesitate to get in touch with us at <a href="mailto:info@nairobisingles.com">info@nairobisingles.com</a> </p>';
+			$sender_email = 'info@nairobisingles.com';
+			$from = 'Nairobisingles';
+			
+			$response = $this->email_model->send_mandrill_mail($email, $name, $subject, $message, $sender_email, $shopping, $from, $button, $cc);
+			
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
 	}
 }

@@ -125,6 +125,13 @@ class Messages extends account
 	
 	public function view_message($receiver_web_name)
 	{
+		//for smileys
+		$image_array = get_clickable_smileys($this->smiley_location, 'instant_message2');
+		$col_array = $this->table->make_columns($image_array, 12);
+		
+		$v_data['smiley_table'] = $this->profile_model->generate_emoticons($col_array);
+		$v_data['smiley_location'] = $this->smiley_location;
+		
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
 		$v_data['genders_query'] = $this->profile_model->get_gender();
 		$v_data['age_groups_query'] = $this->profile_model->get_age_group();

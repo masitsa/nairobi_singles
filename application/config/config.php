@@ -15,6 +15,7 @@
 |
 */
 $config['base_url']	= 'http://localhost/nairobi_singles/';
+#$config['base_url']	= 'http://development.nairobisingles.com/';
 
 /*
 |--------------------------------------------------------------------------
@@ -370,6 +371,7 @@ $config['proxy_ips'] = '';
 $config['modules_locations'] = array(
 		APPPATH.'modules/' => '../modules/',
 	);
+$config['mandrill_key']    = 'yjFJ6K54RN6qZillqrUXXg';
 
 
 /* End of file config.php */

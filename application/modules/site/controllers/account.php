@@ -8,6 +8,7 @@ class Account extends MX_Controller
 	var $image_size;
 	var $thumb_size;
 	var $messages_path;
+	var $smiley_location;
 	
 	function __construct()
 	{
@@ -31,6 +32,7 @@ class Account extends MX_Controller
 			$this->messages_path = realpath(APPPATH . '../assets/messages');
 			$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
 			$this->profile_image_location = base_url().'assets/images/profile/';
+			$this->smiley_location = base_url().'assets/images/smileys/';
 			$this->client_id = $this->session->userdata('client_id');
 			$this->image_size = 600;
 			$this->thumb_size = 80;

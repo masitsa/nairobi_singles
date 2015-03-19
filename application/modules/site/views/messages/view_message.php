@@ -51,12 +51,13 @@
                             <input type="hidden" id="ajax_receiver" value="<?php echo $receiver_id;?>" />
                             <input type="hidden" id="prev_message_count" value="<?php echo $received_messages;?>" />
                             <?php
-								echo form_open('site/profile/message_profile/1', array('class' => 'send_message2'));
+								echo form_open('site/profile/message_profile/1', array('class' => 'send_message2', 'id' => 'compose_message'));
 								echo form_hidden('receiver_id', $receiver_id);
 							?>
 							<div class="form-group login-username">
 								<div >
 									<textarea name="client_message_details" id="instant_message2" class="form-control input"  size="20" placeholder="Enter message" required="required"></textarea>
+                                    <?php echo $smiley_table; ?>
 								</div>
 							</div>
 							
@@ -89,7 +90,9 @@
 </div>
 <!-- /main container -->
 
-<div class="gap"> </div><script type="text/javascript">
+<div class="gap"> </div>
+<script type="text/javascript">
+
 	$(document).ready(function() {
 		
 		//keep div scrolled at the bottom
