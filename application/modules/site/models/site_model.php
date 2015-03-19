@@ -204,6 +204,32 @@ class Site_model extends CI_Model
 		
 		return $query;
 	}
+	public function get_all_neighbourhood()
+	{
+		$this->db->from('neighbourhood');
+		$this->db->select('*');
+		$this->db->where('neighbourhood_id > 0');
+		$this->db->order_by('neighbourhood_id','ASC');
+		
+		$query = $this->db->get();
+		$response['neighbourhood'] = array();
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $res)
+			{
+				$product = array();
+				# code...
+				$product['neighbourhood_id'] = $res->neighbourhood_id;
+	            $product['neighbourhood_name'] = $res->neighbourhood_name;
+	            $product['neighbourhood_parent'] = $res->neighbourhood_parent;
+	            
+	            array_push($response['neighbourhood'],$product);
+
+			}
+
+		}
+		return $response;
+	}
 }
 
 ?>

@@ -9,8 +9,12 @@
             <div class="w100 clearfix category-top">
             	<h2> Credits </h2>
             </div>
-            
-            <div class="alert alert-info center-align"><p>Your account balance is currently <?php echo $account_balance;?> credits</p> <p>You get billed for sending messages and liking profiles at Ksh 5 & Ksh 0.5 respectively</div>
+            <div class="alert alert-info ">
+            		<p>How it works : </p> 
+            		<p>You get billed for sending messages and liking profiles at  5  &  0.5 chatcredit respectively
+            </div>
+
+            <div class="alert alert-info center-align"><p>Your account balance is currently <?php echo $account_balance;?> credits</p> <p>You get billed for sending messages and liking profiles at  5  &  0.5 chatcredit respectively</div>
         
         	<?php
 			//error messages
