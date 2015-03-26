@@ -152,6 +152,7 @@ class Messages extends account
 		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
 		$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
 		$v_data['profile_image_location'] = $this->profile_image_location;
+		$v_data['account_balance'] = $this->account_balance;
 		
 		$data['content'] = $this->load->view('messages/view_message', $v_data, true);
 		$data['title'] = $this->site_model->display_page_title();

@@ -38,7 +38,6 @@ class Email_model extends CI_Model
 	*/
 	function send_mandrill_mail($user_email, $user_name, $subject, $message, $sender_email = NULL, $shopping = NULL, $from = NULL, $button = NULL, $cc = NULL)
 	{
-		$this->load->library('Mandrill', 'yjFJ6K54RN6qZillqrUXXg');
 		if(!isset($sender_email)){
 			$sender_email = "info@nairobisingles.com";
 		}
@@ -48,9 +47,7 @@ class Email_model extends CI_Model
 		if(!isset($from)){
 			$from = "Nairobisingles";
 		}
-		if($cc == NULL){
-			$cc = "amasitsa@live.com";
-		}
+		
 		if(!isset($button)){
 			//$button = '<a class="mcnButton " title="Confirm Account" href="http://www.intorelook.com.au" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Shop Now</a>';
 			$button = '';

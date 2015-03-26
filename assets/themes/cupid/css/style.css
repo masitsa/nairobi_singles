@@ -52,8 +52,8 @@ textarea{min-height:110px;}
 
 /*** b) Logo ***/
 /*.home-content{background:#d90000 url(../../../images/nairobi_skyline.png) no-repeat; background-position:bottom; width:100%; min-height: 372px; padding-top:1em;}*/
-.home-content{min-height: 500px; background: url("../../../images/nai.jpg") no-repeat fixed 0 0px / cover  rgba(0, 0, 0, 0); padding-top:4em; padding-bottom:1em;}
-.inner-content{min-height: 150px; background: url("../../../images/nai.jpg") no-repeat fixed 0 -106px / cover  rgba(0, 0, 0, 0); padding-top:2em; padding-bottom:1em;}
+.home-content{min-height: 500px; background: #660099 url("../../../images/nai.jpg") no-repeat fixed 0 0px / cover  rgba(0, 0, 0, 0); padding-top:4em; padding-bottom:1em;}
+.inner-content{min-height: 150px; background: #660099 url("../../../images/nai.jpg") no-repeat fixed 0 -106px / cover  rgba(0, 0, 0, 0); padding-top:2em; padding-bottom:1em;}
 .home-content h1, .home-content h2, .inner-content h1, .inner-content h2{margin: 0 auto; text-align:center;}
 .home-content h1, .inner-content h1{font-size:3em;}
 .home-content h2, .inner-content h2{margin-top: 2%;}
@@ -77,11 +77,11 @@ textarea{min-height:110px;}
 .home-content .pull-right .btn-primary{background-color:#d90000; border: 1px solid #fff;}
 .home-content span{color: #fff;}
 .home-sign-up li a span{color: #969696;}
-.home-sign-up .join-button{width:200px; font-size:1em; height:40px; background-color:#8A00CC; color:white;}
-.home-sign-up .join-button2{width:100%; font-size:1em; height:40px; background-color:#8A00CC; color:white;}
+.home-sign-up .join-button{width:200px; font-size:1em; height:40px; background-color:#660099; color:white;}
+.home-sign-up .join-button2{width:100%; font-size:1em; height:40px; background-color:#660099; color:white;}
 p{font-size: 0.8em;}
 a.cupid{color: #FE0083; font-size: 0.8em;}
-a.cupid:hover{color: #8A00CC; text-decoration:none;}
+a.cupid:hover{color: #660099; text-decoration:none;}
 
 .home-links{margin-top: 10em;}
 .home-links .btn{font-size: 1em; width: 200px; height:80px; margin-top: 10px;}

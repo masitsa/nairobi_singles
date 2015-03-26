@@ -9,6 +9,7 @@ class Account extends MX_Controller
 	var $thumb_size;
 	var $messages_path;
 	var $smiley_location;
+	var $account_balance;
 	
 	function __construct()
 	{
@@ -34,6 +35,7 @@ class Account extends MX_Controller
 			$this->profile_image_location = base_url().'assets/images/profile/';
 			$this->smiley_location = base_url().'assets/images/smileys/';
 			$this->client_id = $this->session->userdata('client_id');
+			$this->account_balance = $this->payments_model->get_account_balance($this->client_id);
 			$this->image_size = 600;
 			$this->thumb_size = 80;
 		}
@@ -49,153 +51,12 @@ class Account extends MX_Controller
     
 	/*
 	*
-	*	Open the account page
+	*	Default action is to go to the home page
 	*
 	*/
-	public function my_account()
+	public function index() 
 	{
-		//Required general page data
-		$v_data['all_children'] = $this->categories_model->all_child_categories();
-		$v_data['parent_categories'] = $this->categories_model->all_parent_categories();
-		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
-		//page data
-		$v_data['user_details'] = $this->users_model->get_user($this->session->userdata('user_id'));
-		$data['content'] = $this->load->view('user/my_account', $v_data, true);
-		
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
-	}
-    
-	/*
-	*
-	*	Open the orders list
-	*
-	*/
-	public function orders_list()
-	{
-		//Required general page data
-		$v_data['all_children'] = $this->categories_model->all_child_categories();
-		$v_data['parent_categories'] = $this->categories_model->all_parent_categories();
-		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
-		//page data
-		$v_data['all_orders'] = $this->orders_model->get_user_orders($this->session->userdata('user_id'));
-		$data['content'] = $this->load->view('user/orders_list', $v_data, true);
-		
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
-	}
-    
-	/*
-	*
-	*	Open the user's details page
-	*
-	*/
-	public function my_details()
-	{
-		//Required general page data
-		$v_data['all_children'] = $this->categories_model->all_child_categories();
-		$v_data['parent_categories'] = $this->categories_model->all_parent_categories();
-		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
-		//page data
-		$v_data['user_details'] = $this->users_model->get_user($this->session->userdata('user_id'));
-		$data['content'] = $this->load->view('user/my_details', $v_data, true);
-		
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
-	}
-    
-	/*
-	*
-	*	Open the user's wishlist
-	*
-	*/
-	public function wishlist()
-	{
-		//Required general page data
-		$v_data['all_children'] = $this->categories_model->all_child_categories();
-		$v_data['parent_categories'] = $this->categories_model->all_parent_categories();
-		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
-		//page data
-		$v_data['all_orders'] = $this->orders_model->get_users_wishlist($this->session->userdata('user_id'));
-		$data['content'] = $this->load->view('user/wishlist', $v_data, true);
-		
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
-	}
-    
-	/*
-	*
-	*	Update a user's account
-	*
-	*/
-	public function update_account()
-	{
-		//form validation rules
-		$this->form_validation->set_rules('last_name', 'Last Names', 'required|xss_clean');
-		$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
-		$this->form_validation->set_rules('phone', 'Phone', 'required|xss_clean');
-		
-		//if form has been submitted
-		if ($this->form_validation->run() == FALSE)
-		{
-			$this->session->set_userdata('front_error_message', validation_errors());
-		}
-		
-		else
-		{
-			//check if user has valid login credentials
-			if($this->users_model->edit_frontend_user($this->session->userdata('user_id')))
-			{
-				$this->session->set_userdata('front_success_message', 'Your details have been successfully updated');
-			}
-			
-			else
-			{
-				$this->session->set_userdata('front_error_message', 'Oops something went wrong and we were unable to update your details. Please try again');
-			}
-		}
-		
-		$this->my_details();
-	}
-    
-	/*
-	*
-	*	Update a user's password
-	*
-	*/
-	public function update_password()
-	{
-		//form validation rules
-		$this->form_validation->set_rules('current_password', 'Current Password', 'required|xss_clean');
-		$this->form_validation->set_rules('new_password', 'New Password', 'required|xss_clean');
-		$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|xss_clean');
-		
-		//if form has been submitted
-		if ($this->form_validation->run() == FALSE)
-		{
-			$this->session->set_userdata('front_error_message', validation_errors());
-		}
-		
-		else
-		{
-			//update password
-			$update = $this->users_model->edit_password($this->session->userdata('user_id'));
-			if($update['result'])
-			{
-				$this->session->set_userdata('front_success_message', 'Your password has been successfully updated');
-			}
-			
-			else
-			{
-				$this->session->set_userdata('front_error_message', $update['message']);
-			}
-		}
-		
-		$this->my_details();
+		redirect('browse');
 	}
     
 	/*
@@ -303,7 +164,7 @@ class Account extends MX_Controller
 	*/
 	public function filter_neighbourhood()
 	{
-		if(isset($_POST['neighbourhood_id']))
+		/*if(isset($_POST['neighbourhood_id']))
 		{
 			$total_neighbourhoods = sizeof($_POST['neighbourhood_id']);
 			$genders = $this->input->post('post_genders');
@@ -342,7 +203,32 @@ class Account extends MX_Controller
 		else
 		{
 			redirect('browse');
+		}*/
+		$genders = $this->input->post('post_genders');
+		$ages = $this->input->post('post_ages');
+		$encounters = $this->input->post('post_encounters');
+		$neighbourhoods = '__';
+		
+		if(isset($_POST['neighbourhood_children']))
+		{
+			$children = $_POST['neighbourhood_children'];
 		}
+		
+		if(isset($_POST['neighbourhood_parent']))
+		{
+			$parents = $_POST['neighbourhood_parent'];
+		}
+		
+		if(!empty($children))
+		{
+			$neighbourhoods = $children;
+		}
+		
+		else if(!empty($parents))
+		{
+			$neighbourhoods = $parents;
+		}
+		$this->profiles('__', $neighbourhoods, $genders, $ages, $encounters);
 	}
     
 	/*
@@ -472,7 +358,7 @@ class Account extends MX_Controller
 		//case of filter_neighbourhood
 		if($neighbourhood_id != '__')
 		{
-			$return = $this->profile_model->create_query_filter($neighbourhood_id, 'client.neighbourhood_id');
+			$return = $this->profile_model->create_neighbourhood_filter($neighbourhood_id, 'neighbourhood.neighbourhood_name');
 			$where .= $return['where'];
 			$v_data['neighbourhoods_array'] = $return['parameters'];
 		}
@@ -482,24 +368,6 @@ class Account extends MX_Controller
 		{
 			$where .= " client.encounter_id = encounter.encounter_id AND (client.client_username LIKE '%".$search."%' OR encounter.encounter_name LIKE '%".$search."%')";
 			$table .= ', encounter';
-		}
-		
-		//case of category
-		if($encounter_id > 0)
-		{
-			$where .= ' AND client.encounter_id = encounter.encounter_id = '.$encounter_id.' ';
-		}
-		
-		//case of brand
-		if($neighbourhood_id > 0)
-		{
-			$where .= ' AND client.neighbourhood_id = '.$neighbourhood_id;
-		}
-		
-		//case of brand
-		if($gender_id > 0)
-		{
-			$where .= ' AND client.gender_id = '.$gender_id;
 		}
 		
 		//pagination
@@ -561,6 +429,7 @@ class Account extends MX_Controller
 			$v_data["last"] = $config['total_rows'];
 		}
 		$v_data['profiles'] = $this->profile_model->get_all_clients($table, $where, $config["per_page"], $page, $limit, $order_by, $order_method);
+		$v_data['profile_image_path'] = $this->profile_image_path;
 		$v_data['profile_image_location'] = $this->profile_image_location;
 		$v_data['current_client_id'] = $this->client_id;
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
@@ -568,6 +437,7 @@ class Account extends MX_Controller
 		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
 		$v_data['encounters_query'] = $this->profile_model->get_encounter();
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
+		$v_data['account_balance'] = $this->account_balance;
 		
 		if($ajax == NULL)
 		{
@@ -645,5 +515,71 @@ class Account extends MX_Controller
 		$data['content'] = $this->load->view('account/view_profile', $v_data, true);
 		$data['title'] = $this->site_model->display_page_title();
 		$this->load->view('templates/general_page', $data);
+	}
+	
+	public function get_neighbourhood_children($web_name = NULL)
+	{
+		$children = '';
+		if($web_name != NULL)
+		{
+			$parent = str_replace("-", " ", $web_name);
+			
+			$this->db->where('neighbourhood_parent = (SELECT neighbourhood_id  FROM neighbourhood WHERE neighbourhood_name = \''.$parent.'\')');
+			$query = $this->db->get('neighbourhood');
+			
+			if($query->num_rows() > 0)
+			{
+				$result = $query->result();
+				$children_array = array();
+				$children_array[''] = '--All locations--';
+				$js = 'class="form-control"';
+				$selected = '';
+				
+				foreach($result as $res)
+				{
+					$neighbourhood_id = $res->neighbourhood_id;
+					$neighbourhood_name = $res->neighbourhood_name;
+					$web_name = $this->profile_model->create_web_name($neighbourhood_name);
+					$children_array[$web_name] = $neighbourhood_name;
+				}
+				
+				$children = form_dropdown('neighbourhood_children', $children_array, $selected, $js);
+			}
+		}
+		
+		
+		echo json_encode($children);
+	}
+	
+	public function get_neighbourhood_children2($neighbourhood_id = NULL)
+	{
+		$children = '';
+		if($neighbourhood_id != NULL)
+		{
+			$this->db->where('neighbourhood_parent = '.$neighbourhood_id);
+			$query = $this->db->get('neighbourhood');
+			
+			if($query->num_rows() > 0)
+			{
+				$result = $query->result();
+				$children_array = array();
+				$children_array[''] = '--All locations--';
+				$js = 'class="form-control"';
+				$selected = '';
+				
+				foreach($result as $res)
+				{
+					$neighbourhood_id = $res->neighbourhood_id;
+					$neighbourhood_name = $res->neighbourhood_name;
+					
+					$children_array[$neighbourhood_id] = $neighbourhood_name;
+				}
+				
+				$children = form_dropdown('child', $children_array, $selected, $js);
+			}
+		}
+		
+		
+		echo json_encode($children);
 	}
 }

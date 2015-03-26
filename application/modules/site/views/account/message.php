@@ -37,7 +37,7 @@
 	?>
     <div class="form-group login-username">
         <div >
-            <textarea name="client_message_details" id="instant_message" class="form-control input"  size="20" placeholder="Enter message" required="required"></textarea>
+            <input type="text" name="client_message_details" id="instant_message" class="form-control input instant-message" placeholder="Enter message" required="required" />
             <?php echo $smiley_table; ?>
         </div>
     </div>
@@ -53,7 +53,8 @@
 <div class="modal-footer">
     <!--<p class="text-center"> Not here before? <a data-toggle="modal"  data-dismiss="modal" href="#ModalSignup"> Sign Up. </a> <br>
     <a href="forgot-password.html" > Lost your password? </a> </p>-->
-</div><script type="text/javascript">
+</div>
+<script type="text/javascript">
 	$(document).ready(function() {
 		
 		//keep div scrolled at the bottom
@@ -81,7 +82,7 @@
 					{
 						$('#prev_message_count').val(curr_message_count);
 						//display new message
-						$("#modal-message").html(data.messages);
+						$("#modal_messages").html(data.messages);
 						
 						//play message tone
 						var new_message = document.getElementById("new_message");
@@ -99,7 +100,7 @@
 				complete: function() 
 				{
 					// Schedule the next request when the current one's complete
-					setTimeout(worker, 5000);
+					setTimeout(worker, 2000);
 				}
 				});
 			})();

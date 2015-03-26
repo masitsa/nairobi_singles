@@ -151,47 +151,82 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="neighbourhood_id" class="col-sm-3 control-label">You're from
-                                <span class="required">*</span></label>
-                            <div class="col-sm-9">
-                                <?php
-                                    //case of an input error
-                                    if(!empty($neighbourhood_id_error))
-                                    {
-                                        ?>
-                                        <select name="neighbourhood_id" class="form-control alert-danger">
-                                            <option value="">---Select neighbourhood---</option>
+                        <div class="row">
+                        	<div class="col-md-4 col-md-offset-3">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
                                         <?php
-                                    }
-                                    
-                                    else
-                                    {
-                                        ?>
-                                        <select name="neighbourhood_id" class="form-control">
-                                            <option value="">---Select neighbourhood---</option>
-                                        <?php
-                                    }
-                                    if($neighbourhoods_query->num_rows() > 0)
-                                    {
-                                        foreach($neighbourhoods_query->result() as $res)
-                                        {
-                                            $neighbourhood_id2 = $res->neighbourhood_id;
-                                            $neighbourhood_name = $res->neighbourhood_name;
-                                            
-                                            if($neighbourhood_id2 == $neighbourhood_id)
+                                            //case of an input error
+                                            if(!empty($parent_error))
                                             {
-                                                echo '<option value="'.$neighbourhood_id2.'" selected="selected">'.$neighbourhood_name.'</option>';
+                                                $js = 'id="filter_neighbourhood2" class="form-control alert-danger"';
                                             }
                                             
                                             else
                                             {
-                                                echo '<option value="'.$neighbourhood_id2.'">'.$neighbourhood_name.'</option>';
+                                                $js = 'id="filter_neighbourhood2" class="form-control"';
                                             }
-                                        }
-                                    }
-                                ?>
-                                </select>
+                                            
+                                            if($neighbourhoods_query['neighbourhood_parents']->num_rows() > 0)
+                                            {
+                                                $parents_array = array();
+                                                $parents_array[''] = '--You\'re from--';
+                                                
+                                                foreach($neighbourhoods_query['neighbourhood_parents']->result() as $res)
+                                                {
+                                                    $neighbourhood_id = $res->neighbourhood_id;
+                                                    $neighbourhood_name = $res->neighbourhood_name;
+                                                    $parents_array[$neighbourhood_id] = $neighbourhood_name;
+                                                }
+												
+                                                echo form_dropdown('parent', $parents_array, $parent, $js);
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-1">
+                            	<div style="margin: 0 auto; text-align:center; line-height:2.5em;margin-left: -12px;">
+                            		
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4" id="children_section2">
+                            	<?php
+								$children_array[''] = '--All locations--';
+								
+								//case of an input error
+								if(!empty($child_error))
+								{
+									$js = 'class="form-control alert-danger"';
+								}
+								
+								else
+								{
+									$js = 'class="form-control"';
+								}
+								
+								if($neighbourhoods_query['neighbourhood_children']->num_rows() > 0)
+								{
+									$parents_array = array();
+									$children_array[''] = '--All locations--';
+									
+									foreach($neighbourhoods_query['neighbourhood_children']->result() as $res)
+									{
+										$neighbourhood_id = $res->neighbourhood_id;
+										$neighbourhood_parent = $res->neighbourhood_parent;
+										$neighbourhood_name = $res->neighbourhood_name;
+										
+										if($neighbourhood_parent == $parent)
+										{
+											$children_array[$neighbourhood_id] = $neighbourhood_name;
+										}
+									}
+									
+									echo form_dropdown('child', $children_array, $child, $js);
+								}
+								?>
                             </div>
                         </div>
                         
@@ -398,6 +433,42 @@
                             <button type="submit" class="btn btn-primary">
                                 Update profile
                             </button>
+                        </div>
+                    </div>
+                </div>
+			<?php echo form_close();?>
+        	
+            <div class="w100 clearfix category-top" style="margin-top:20px;">
+            	<h2> Edit password </h2>
+            </div>
+            <?php echo form_open('update-password', array('role' => 'form', 'class' => 'form-horizontal'))?>
+            <?php echo form_hidden('slug', $current_password);?>
+                <div class="row">
+                    <div class="col-md-12">
+                    	<div class="form-group">
+                            <label for="current_password" class="col-sm-4 control-label">Current password <span class="required">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="current_password" placeholder="Current password" value="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password" class="col-sm-4 control-label">New password <span class="required">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="new_password" placeholder="New password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password" class="col-sm-4 control-label">Confirm password <span class="required">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="confirm_password" placeholder="Confirm password">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-4">
+                            	<div class="center-align">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> &nbsp; Update Password </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

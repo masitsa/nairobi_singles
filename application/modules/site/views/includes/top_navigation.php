@@ -1,7 +1,5 @@
 <?php
 	$account_balance = $this->payments_model->get_account_balance($this->session->userdata('client_id'));
-
-
 ?>
 <!-- Fixed navbar start -->
 <div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation">
@@ -62,7 +60,6 @@
         <li > <a href="<?php echo site_url()."browse";?>"> Browse </a> </li>
         
         <li > <a href="<?php echo site_url()."messages/inbox";?>"> Messages </a> </li>
-          <li > <a href="<?php echo site_url()."messages/inbox";?>"> Unread Messages </a> </li>
         
         <!-- change width of megamenu = use class > megamenu-fullwidth, megamenu-60width, megamenu-40width -->
         <li class="dropdown megamenu-80width "> <a data-toggle="dropdown" class="dropdown-toggle" href="<?php echo site_url()."";?>"> <?php echo $this->session->userdata('client_username');?> <b class="caret"> </b> </a>

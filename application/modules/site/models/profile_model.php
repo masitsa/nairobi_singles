@@ -19,16 +19,16 @@ class Profile_model extends CI_Model
 				}
 				
 				//delete any other uploaded image
-				if($this->file_model->delete_file($profile_image_path."\\".$image))
+				if($this->file_model->delete_file($profile_image_path."\\".$image, $profile_image_path))
 				{
 					//delete any other uploaded thumbnail
-					$this->file_model->delete_file($profile_image_path."\\thumbnail_".$image);
+					$this->file_model->delete_file($profile_image_path."\\thumbnail_".$image, $profile_image_path);
 				}
 				
 				else
 				{
-					$this->file_model->delete_file($profile_image_path."/".$image);
-					$this->file_model->delete_file($profile_image_path."/thumbnail_".$image);
+					$this->file_model->delete_file($profile_image_path."/".$image, $profile_image_path);
+					$this->file_model->delete_file($profile_image_path."/thumbnail_".$image, $profile_image_path);
 				}
 			}
 			//Upload image
@@ -113,11 +113,37 @@ class Profile_model extends CI_Model
 	
 	public function get_neighbourhoods()
 	{
-		$this->db->where('neighbourhood_status', 1);
+		$this->db->where('neighbourhood_parent', NULL);
 		$this->db->order_by('neighbourhood_name');
 		$query = $this->db->get('neighbourhood');
 		
-		return $query;
+		$this->db->where('neighbourhood_parent > 0');
+		$this->db->order_by('neighbourhood_name');
+		$query2 = $this->db->get('neighbourhood');
+		
+		$data['neighbourhood_parents'] = $query;
+		$data['neighbourhood_children'] = $query2;
+		
+		return $data;
+	}
+	
+	public function is_parent($neighbourhood_id)
+	{
+		$this->db->where('neighbourhood_id', $neighbourhood_id);
+		$query = $this->db->get('neighbourhood');
+		
+		if($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			$parent = $row->neighbourhood_parent;
+			
+			return $parent;
+		}
+		
+		else
+		{
+			return 0;
+		}
 	}
 	
 	public function get_gender()
@@ -156,10 +182,22 @@ class Profile_model extends CI_Model
 	
 	public function register_profile_details($client_id, $client_image, $client_thumb)
 	{
+		$parent_neighbourhood = $this->input->post('parent');
+		$child_neighbourhood = $this->input->post('child');
+		
+		if(empty($child_neighbourhood))
+		{
+			$neighbourhood_id = $parent_neighbourhood;
+		}
+		else
+		{
+			$neighbourhood_id = $child_neighbourhood;
+		}
+		
 		$newdata = array(
 			   'client_about'			=> $this->input->post('client_about'),
 			   'client_dob'				=> $this->input->post('client_dob3').'-'.$this->input->post('client_dob2').'-'.$this->input->post('client_dob1'),
-			   'neighbourhood_id'		=> $this->input->post('neighbourhood_id'),
+			   'neighbourhood_id'		=> $neighbourhood_id,
 			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id'),
 			   'gender_id'				=> $this->input->post('gender_id'),
 			   'age_group_id'			=> $this->input->post('age_group_id'),
@@ -381,6 +419,35 @@ class Profile_model extends CI_Model
 		return $return;
 	}
 	
+	public function create_neighbourhood_filter($parameter_array, $table_field)
+	{
+		$parameters = explode("&", $parameter_array);
+		$total = count($parameters);
+		$where = ' AND (';
+		
+		for($r = 0; $r < $total; $r++)
+		{
+			$parameter_name = str_replace("-", " ", $parameters[$r]);
+			
+			if($r == 0)
+			{
+				$where .= $table_field.' = \''.$parameter_name.'\' OR neighbourhood_parent = (SELECT neighbourhood_id FROM neighbourhood WHERE neighbourhood_name = \''.$parameter_name.'\')';
+			}
+			
+			else
+			{
+				$where .= ' OR '.$table_field.' = \''.$parameter_name.'\' OR neighbourhood_parent = (SELECT neighbourhood_id FROM neighbourhood WHERE neighbourhood_name = \''.$parameter_name.'\')';
+			}
+		}
+		
+		$where .= ')';
+		
+		$return['where'] = $where;
+		$return['parameters'] = $parameters;
+		
+		return $return;
+	}
+	
 	public function create_age_filter($parameter_array, $table_field)
 	{
 		$parameters = explode("&", $parameter_array);
@@ -502,7 +569,7 @@ class Profile_model extends CI_Model
 		{
 			//check if file exists in the db
 			$query = $this->chat_exists($client_id, $receiver_id);
-			
+			//echo $query->num_rows(); die();
 			if($query->num_rows() > 0)
 			{
 				$row = $query->row();
@@ -552,7 +619,7 @@ class Profile_model extends CI_Model
 		{
 			for($s = 0; $s < $total_rows; $s++)
 			{
-				$grid .= '<div class="col-md-1">'.$col_array[$r][$s].'</div>';
+				$grid .= '<div class="col-md-1 col-sm-1 col-xs-1">'.$col_array[$r][$s].'</div>';
 			}
 		}
 		
@@ -565,5 +632,102 @@ class Profile_model extends CI_Model
 	{
 		$str = parse_smileys($str, $smiley_location);
 		return $str;
+	}
+	
+	/*
+	*	Edit an existing user's password
+	*	@param int $user_id
+	*
+	*/
+	public function edit_password($user_id)
+	{
+		if($this->input->post('slug') == md5($this->input->post('current_password')))
+		{
+			if($this->input->post('new_password') == $this->input->post('confirm_password'))
+			{
+				$data['client_password'] = md5($this->input->post('new_password'));
+		
+				$this->db->where('client_id', $user_id);
+				
+				if($this->db->update('client', $data))
+				{
+					$return['result'] = TRUE;
+				}
+				else{
+					$return['result'] = FALSE;
+					$return['message'] = 'Oops something went wrong and your password could not be updated. Please try again';
+				}
+			}
+			else{
+					$return['result'] = FALSE;
+					$return['message'] = 'New Password and Confirm Password don\'t match';
+			}
+		}
+		
+		else
+		{
+			$return['result'] = FALSE;
+			$return['message'] = 'You current password is not correct. Please try again';
+		}
+		
+		return $return;
+	}
+	
+	public function image_display($base_path, $location, $image_name = NULL)
+	{
+		$default_image = 'http://placehold.it/300x200&text=NS';
+		$file_path = $base_path.'/'.$image_name;
+		//echo $file_path.'<br/>';
+		
+		//Check if image was passed
+		if($image_name != NULL)
+		{
+			if(!empty($image_name))
+			{
+				if((file_exists($file_path)) && ($file_path != $base_path.'\\'))
+				{
+					return $location.$image_name;
+				}
+				
+				else
+				{
+					return $default_image;
+				}
+			}
+			
+			else
+			{
+				return $default_image;
+			}
+		}
+		
+		else
+		{
+			return $default_image;
+		}
+	}
+	
+	public function check_online($client_id)
+	{
+		$this->db->where("`user_data` LIKE '%\"client_code\";s:32:\"".md5($client_id)."\"%'");
+		$query = $this->db->get('ci_sessions');
+		
+		if($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			
+			$current_time = strtotime(date('Y-m-d H:i:s'));
+			$last_activity = $row->last_activity;
+			
+			$activity_difference = $current_time - $last_activity;
+			$time_difference = date('i', $activity_difference);
+			
+			return $time_difference;
+		}
+		
+		else
+		{
+			return FALSE;
+		}
 	}
 }

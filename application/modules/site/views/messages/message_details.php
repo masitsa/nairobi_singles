@@ -41,11 +41,11 @@
 							echo 
 							'
 								<div class="row">
-									<div class="col-md-2">
+									<div class="col-md-2 col-sm-2 col-xs-2">
 										<img src="'.$receiver_thumb.'" class="img-responsive profile-image">
 									</div>
 									
-									<div class="col-md-8 col-md-offset-2 bubble-left">
+									<div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-8 col-xs-offset-2 bubble-left">
 										'.$client_message_details.'
 										<div class="message-date pull-right">'.date('jS M Y H:i a',strtotime($created)).'</div>
 									</div>
@@ -59,11 +59,11 @@
 							echo 
 							'
 								<div class="row">
-									<div class="col-md-8 col-md-offset-2 bubble">
+									<div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-8 col-xs-offset-2 bubble">
 										<div>'.$client_message_details.'</div>
 										<div class="message-date pull-right">'.date('jS M Y H:i a',strtotime($created)).'</div>
 									</div>
-									<div class="col-md-2">
+									<div class="col-md-2 col-sm-2 col-xs-2">
 										<img src="'.$client_thumb.'" class="img-responsive profile-image">
 									</div>
 								</div>

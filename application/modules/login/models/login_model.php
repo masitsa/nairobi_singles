@@ -140,7 +140,8 @@ class Login_model extends CI_Model
                    'client_login_status'    => TRUE,
                    'client_username'     	=> $result[0]->client_username,
                    'client_email'     		=> $result[0]->client_email,
-                   'client_id'  			=> $result[0]->client_id
+                   'client_id'  			=> $result[0]->client_id,
+                   'client_code'  			=> md5($result[0]->client_id)
                );
 
 			$this->session->set_userdata($newdata);
@@ -220,7 +221,7 @@ class Login_model extends CI_Model
 			$name = $user_name;
 			
 			$subject = 'You requested a password reset';
-			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password.</p>';
+			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password. You can change your password to something more memorable in your profile section once you log in.</p>';
 			
 			$button = '<p><a class="mcnButton " title="Sign in" href="'.site_url().'sign-in" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Sign in</a></p>';
 			$shopping = '<p>If you have any queries or concerns do not hesitate to get in touch with us at <a href="mailto:info@nairobisingles.com">info@nairobisingles.com</a> </p>';

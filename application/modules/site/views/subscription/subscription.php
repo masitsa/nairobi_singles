@@ -9,12 +9,6 @@
             <div class="w100 clearfix category-top">
             	<h2> Credits </h2>
             </div>
-            <div class="alert alert-info ">
-            		<p>How it works : </p> 
-            		<p>You get billed for sending messages and liking profiles at  5  &  0.5 chatcredit respectively
-            </div>
-
-            <div class="alert alert-info center-align"><p>Your account balance is currently <?php echo $account_balance;?> credits</p> <p>You get billed for sending messages and liking profiles at  5  &  0.5 chatcredit respectively</div>
         
         	<?php
 			//error messages
@@ -42,6 +36,27 @@
 				</div>
 				<?php
 			}
+			?>
+
+            <div class="alert alert-info">
+                <h2 class="center-align">Chatcredit</h2>
+                
+            	<p class="center-align">Your account balance is currently <?php echo $account_balance;?> chatcredits</p>
+                
+                <p>We charge our members for the services in order to keep advertisement away, maintain the site and so that only serious persons register.</p>
+                
+                <p>Chatcredit never expires. Pay as you go. A third party does the processing for the payment and it is no way linked to your profile. We will never know your phone number or credit card information. Every chat message is worth <?php echo $this->config->item('message_cost');?> chatcredits and liking, poking, kissing or hugging other users is <?php echo $this->config->item('like_cost');?> chatcredits per like, poke, kiss or hug.</p>
+                
+                <!--<p>
+                    <ul>
+                        <li>Buy 100 chatcredits (KES 50)</li>
+                        <li>Buy 250 chatcredits (KES 100)</li>
+                        <li>Buy 600 chatcredits (KES 500)</li>
+                        <li>Buy 1500 chatcredits (KES 1000)</li>
+                    </ul>
+                </p>-->
+            </div>
+            <?php
             
             if(!empty($iframe))
             {
@@ -73,7 +88,7 @@
 					echo form_hidden('description', $credit_type_description);
 					
 					?>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-xs-12 col-sm-6 col-md-3">
                         <div class="thumbnail">
                             <img src="http://placehold.it/300x200&text=<?php echo $credit_type_name;?>" alt="<?php echo $web_name;?>">
                             <div class="caption">

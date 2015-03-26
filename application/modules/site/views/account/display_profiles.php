@@ -8,7 +8,7 @@
 				foreach($product as $prods)
 				{
 					$client_username = $prods->client_username;
-					$client_image = $this->profile_image_location.$prods->client_image;
+					$client_image = $prods->client_image;
 					$client_id = $prods->client_id;
 					$client_dob = $prods->client_dob;
 					$age = $this->profile_model->calculate_age($client_dob);
@@ -21,6 +21,18 @@
 					$client_about = $prods->client_about;
 					$mini_desc = implode(' ', array_slice(explode(' ', $client_about), 0, 10));
 					$web_name = $this->profile_model->create_web_name($client_username);
+					$image = $this->profile_model->image_display($profile_image_path, $profile_image_location, $client_image);
+					$time_difference = $this->profile_model->check_online($client_id);
+					
+					//check if user is online
+					if(!empty($time_difference) && ($time_difference <= 10))
+					{
+						$online = '<span style="color:green">Online</span>';
+					}
+					else
+					{
+						$online = '';
+					}
 					
 					//check if profile is liked
 					if($this->profile_model->is_profile_liked($current_client_id, $client_id))
@@ -40,29 +52,54 @@
 						';
 					}
 					
+					if($account_balance > 0)
+					{
+						$actions = '
+							<div class="hide-mobile">
+								<span id="like_section">'.$like.'</span>
+								<a class="btn btn-success message" client_id="'.$client_id.' "data-toggle="modal"  data-dismiss="modal" href="#send-message"> 
+									<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
+								</a>
+							</div>
+							
+							<div class="show-mobile">
+								<span id="like_section">'.$like.'</span>
+								<a class="btn btn-success" href="'.site_url().'messages/inbox/'.$web_name.'"> 
+									<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
+								</a>
+							</div>
+								';
+					}
+					
+					else
+					{
+						$actions = '
+								<a class="btn btn-warning" href="'.site_url().'credits"> 
+									<span><i class="fa fa-money"></i> Purchase credits </span> 
+								</a>';
+					}
+					
 					echo
 					'
 					<div class="item col-sm-4 col-lg-4 col-md-4 col-xs-6">
 						<div class="product">
 							<div class="image"> 
-								<a href="'.site_url().'browse/'.$web_name.'"><img src="'.$client_image.'" alt="img" class="img-responsive"></a>
+								<a href="'.site_url().'browse/'.$web_name.'"><img src="'.$image.'" alt="img" class="img-responsive"></a>
 							</div>
 							
 							<div class="description">
 								<h4><a href="'.site_url().'browse/'.$web_name.'">'.$client_username.'</a></h4>
 								'.$age.' year old '.$gender_name.' 
 								<p>'.$mini_desc.'</p>
-								<div style="margin-top: -20px;">
+								<div style="margin-top: -20px; min-height: 100px;">
 									<br/><strong>Seeking </strong>'.$client_looking_gender_name.' for '.$encounter_name.'
 									<br/><strong>Location:</strong> '.$neighbourhood_name.'
+									<br/>'.$online.'
 								</div>
 							</div>
 							
 							<div class="action-control">
-								<span id="like_section">'.$like.'</span>
-								<a class="btn btn-primary message" client_id="'.$client_id.' "data-toggle="modal"  data-dismiss="modal" href="#send-message"> 
-									<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
-								</a>
+								'.$actions.'
 							</div>
 						</div>
 					</div><!--/.item-->

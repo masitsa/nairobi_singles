@@ -314,7 +314,7 @@ $(document).ready(function () {
     $('.tooltipHere').tooltip();
 
     // customs select by minimalect
-    $("select").minimalect();
+    //$("select").minimalect();
 
     // cart quantity changer sniper
     $("input[name='quanitySniper']").TouchSpin({

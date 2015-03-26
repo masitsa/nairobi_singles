@@ -116,7 +116,7 @@
 <script src="<?php echo base_url()."assets/themes/tshop/";?>js/owl.carousel.min.js"></script> 
 
 <!-- jQuery minimalect // custom select   --> 
-<script src="<?php echo base_url()."assets/themes/tshop/";?>js/jquery.minimalect.min.js"></script> 
+<!-- <script src="<?php echo base_url()."assets/themes/tshop/";?>js/jquery.minimalect.min.js"></script> -->
 
 <!-- include touchspin.js // touch friendly input spinner component   --> 
 <script src="<?php echo base_url()."assets/themes/tshop/";?>js/bootstrap.touchspin.js"></script> 
@@ -199,7 +199,7 @@ $(document).on("click","a.message",function()
 		contentType: false,
 		processData: false,
 		success:function(data)
-		{	
+		{
 			$("#modal-message").html(data);
 		},
 		error: function(xhr, status, error) {
@@ -232,7 +232,7 @@ $(document).on("submit","form.send_message",function(e)
 				$("#send_error").html('<div class="alert alert-danger">Unable to send message. Please try again</div>');
 			}
 			else
-			{
+			{//alert(data.messages);
 				var prev_message_count = parseInt($('#prev_message_count').val());//count the number of messages displayed
 				prev_message_count = prev_message_count + 1;
 				$('#prev_message_count').val(prev_message_count);
@@ -332,4 +332,52 @@ $(document).on("submit","form.send_message2",function(e)
     setTimeout(worker, 5000);
 })();*/
 // 1 second = 1000 milliseconds.
+//Like
+$(document).on("change","select#filter_neighbourhood",function()
+{
+	var category_parent = $(this).val();
+	
+	$.ajax({
+		type:'POST',
+		url: '<?php echo site_url();?>site/account/get_neighbourhood_children/'+category_parent,
+		cache:false,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success:function(data)
+		{	
+			$("#children_section").html(data);
+		},
+		error: function(xhr, status, error) 
+		{
+			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+		}
+	});
+	
+	return false;
+	
+});
+$(document).on("change","select#filter_neighbourhood2",function()
+{
+	var category_parent = $(this).val();
+	
+	$.ajax({
+		type:'POST',
+		url: '<?php echo site_url();?>site/account/get_neighbourhood_children2/'+category_parent,
+		cache:false,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success:function(data)
+		{	
+			$("#children_section2").html(data);
+		},
+		error: function(xhr, status, error) 
+		{
+			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+		}
+	});
+	
+	return false;
+});
 </script>

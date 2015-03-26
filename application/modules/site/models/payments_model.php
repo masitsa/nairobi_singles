@@ -12,8 +12,8 @@ class Payments_model extends CI_Model
 		$iframelink 		= $api.'/api/PostPesapalDirectOrderV4';
 		
 		//Kenyan keys
-		$consumer_key 		= "1VsCbDt7UgL7tiZMjXnea8TX3vRb/Lcj"; //fill key here
-		$consumer_secret 	= "7PxQd2Zei6z/SlrqyMW5gUm8QvQ="; //fill secret here
+		$consumer_key 		= $this->config->item('consumer_key'); //fill key here
+		$consumer_secret 	= $this->config->item('consumer_secret'); //fill secret here
 		 
 		$signature_method	= new OAuthSignatureMethod_HMAC_SHA1();
 		$consumer 			= new OAuthConsumer($consumer_key, $consumer_secret);
@@ -77,10 +77,74 @@ class Payments_model extends CI_Model
 		$iframe_src->sign_request($signature_method, $consumer, $token);
 		return $iframe_src;
 	}
+	
+	public function get_pesapal_payment($pesapalTrackingId, $pesapal_merchant_reference)
+	{
+		$statusrequestAPI 	= 'https://www.pesapal.com/api/querypaymentstatus';//'http://demo.pesapal.com/api/querypaymentstatus'
+		$consumer_key 		= $this->config->item('consumer_key');
+		$consumer_secret 	= $this->config->item('consumer_secret');
+		
+		// Parameters sent to you by PesaPal IPN
+		$pesapalNotification	=	'CHANGE';
+		/*$pesapalTrackingId	=	'f419a150-3236-4418-809d-aec956b20484';
+		$pesapal_merchant_reference	=	'5';*/
+		
+		if($pesapalNotification=="CHANGE" && $pesapalTrackingId!='')
+		{
+		   $token = $params = NULL;
+		   $consumer = new OAuthConsumer($consumer_key, $consumer_secret);
+		   $signature_method = new OAuthSignatureMethod_HMAC_SHA1();
+		
+		   //get transaction status
+		   $request_status = OAuthRequest::from_consumer_and_token($consumer, $token, "GET", $statusrequestAPI, $params);
+		   $request_status->set_parameter("pesapal_merchant_reference", $pesapal_merchant_reference);
+		   $request_status->set_parameter("pesapal_transaction_tracking_id",$pesapalTrackingId);
+		   $request_status->sign_request($signature_method, $consumer, $token);
+		
+		   $ch = curl_init();
+		   curl_setopt($ch, CURLOPT_URL, $request_status);
+		   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		   curl_setopt($ch, CURLOPT_HEADER, 1);
+		   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		   if(defined('CURL_PROXY_REQUIRED')) if (CURL_PROXY_REQUIRED == 'True')
+		   {
+			  $proxy_tunnel_flag = (defined('CURL_PROXY_TUNNEL_FLAG') && strtoupper(CURL_PROXY_TUNNEL_FLAG) == 'FALSE') ? false : true;
+			  curl_setopt ($ch, CURLOPT_HTTPPROXYTUNNEL, $proxy_tunnel_flag);
+			  curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+			  curl_setopt ($ch, CURLOPT_PROXY, CURL_PROXY_SERVER_DETAILS);
+		   }
+		
+		   $response = curl_exec($ch);
+		
+		   $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		   $raw_header  = substr($response, 0, $header_size - 4);
+		   $headerArray = explode("\r\n\r\n", $raw_header);
+		   $header      = $headerArray[count($headerArray) - 1];
+		
+		   //transaction status
+		   $elements = preg_split("/=/",substr($response, $header_size));
+		   $status = $elements[1];
+		
+		   curl_close ($ch);
+		   return $elements;
+		   
+		   //UPDATE YOUR DB TABLE WITH NEW STATUS FOR TRANSACTION WITH pesapal_transaction_tracking_id $pesapalTrackingId
+		
+		   /*if(DB_UPDATE_IS_SUCCESSFUL)
+		   {
+			  $resp="pesapal_notification_type=$pesapalNotification&pesapal_transaction_tracking_id=$pesapalTrackingId&pesapal_merchant_reference=$pesapal_merchant_reference";
+			  ob_start();
+			  echo $resp;
+			  ob_flush();
+			  exit;
+		   }*/
+		}
+	}
 
 	public function get_credit_types()
 	{
 		$this->db->where('credit_type_status', 1);
+		$this->db->order_by('credit_type_amount', 'ASC');
 		$query = $this->db->get('credit_type');
 		
 		return $query;
@@ -116,6 +180,22 @@ class Payments_model extends CI_Model
 	{
 		$data['transaction_tracking_id'] = $transaction_tracking_id;
 		$data['client_credit_status'] = 1;
+		
+		$this->db->where('client_credit_id', $client_credit_id);
+		if($this->db->update('client_credit', $data))
+		{
+			return TRUE;
+		}
+		
+		else
+		{
+			return FALSE;
+		}
+	}
+	
+	public function update_payment_response($transaction_tracking_id, $client_credit_id)
+	{
+		$data['transaction_tracking_id'] = $transaction_tracking_id;
 		
 		$this->db->where('client_credit_id', $client_credit_id);
 		if($this->db->update('client_credit', $data))
@@ -183,8 +263,30 @@ class Payments_model extends CI_Model
 		{
 			return FALSE;
 		}
+	}
+	
+	public function first_hundred($client_id)
+	{
+		$this->db->from('client');
+		$total_clients = $this->db->count_all_results();
 		
+		//grant 300 credits to first 100 users
+		if($total_clients <= 100)
+		{
+			//save client credit
+			$data = array
+			(
+				'client_id' => $client_id,
+				'client_credit_status' => 1,
+				'client_credit_amount' => 300,
+				'created' => date('Y-m-d H:i:s')
+			);
+			
+			$this->db->insert('client_credit', $data);
+			$client_credit_id = $this->db->insert_id();
+		}
 		
+		return TRUE;
 	}
 }
 ?>

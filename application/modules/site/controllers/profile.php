@@ -10,8 +10,8 @@ class Profile extends account
 	function __construct()
 	{
 		parent:: __construct();
-		$this->message_amount = 5;
-		$this->like_amount = 0.5;
+		$this->message_amount = $this->config->item('message_cost');
+		$this->like_amount = $this->config->item('like_cost');
 	}
 	
 	public function update_profile_image()
@@ -37,10 +37,11 @@ class Profile extends account
 	}
 	
 	public function about_you()
-	{
+	{	
 		//initialize required variables
 		$v_data['profile_image_location'] = 'http://placehold.it/300x200&text=Upload+image';
-		$v_data['neighbourhood_id_error'] = '';
+		$v_data['parent_error'] = '';
+		$v_data['child_error'] = '';
 		$v_data['client_about_error'] = '';
 		$v_data['client_dob1_error'] = '';
 		$v_data['client_dob2_error'] = '';
@@ -64,7 +65,8 @@ class Profile extends account
 		}
 		
 		$this->form_validation->set_error_delimiters('', '');
-		$this->form_validation->set_rules('neighbourhood_id', 'Neighbourhood', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('parent', 'Neighbourhood', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('child', 'Location', 'trim|xss_clean');
 		$this->form_validation->set_rules('client_about', 'About you', 'trim|required|min_length[20]|xss_clean');
 		$this->form_validation->set_rules('client_dob1', 'Day of birth', 'trim|required|greater_than[0]|less_than[32]|xss_clean');
 		$this->form_validation->set_rules('client_dob2', 'Month of birth', 'trim|required|greater_than[0]|less_than[13]|xss_clean');
@@ -97,7 +99,8 @@ class Profile extends account
 		if(!empty($validation_errors))
 		{
 			//create errors
-			$v_data['neighbourhood_id_error'] = form_error('neighbourhood_id');
+			$v_data['parent_error'] = form_error('parent');
+			$v_data['child_error'] = form_error('child');
 			$v_data['client_about_error'] = form_error('client_about');
 			$v_data['client_dob1_error'] = form_error('client_dob1');
 			$v_data['client_dob2_error'] = form_error('client_dob2');
@@ -108,7 +111,8 @@ class Profile extends account
 			$v_data['encounter_id_error'] = form_error('encounter_id');
 			
 			//repopulate fields
-			$v_data['neighbourhood_id'] = set_value('neighbourhood_id');
+			$v_data['parent'] = set_value('parent');
+			$v_data['child'] = set_value('child');
 			$v_data['client_about'] = set_value('client_about');
 			$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
 			$v_data['age_group_id'] = set_value('age_group_id');
@@ -125,7 +129,8 @@ class Profile extends account
 		{
 			if(!empty($v_data['profile_image_error']))
 			{
-				$v_data['neighbourhood_id'] = set_value('neighbourhood_id');
+				$v_data['parent'] = set_value('parent');
+				$v_data['child'] = set_value('child');
 				$v_data['client_about'] = set_value('client_about');
 				$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
 				$v_data['age_group_id'] = set_value('age_group_id');
@@ -137,7 +142,8 @@ class Profile extends account
 			
 			else
 			{
-				$v_data['neighbourhood_id'] = '';
+				$v_data['parent'] = '';
+				$v_data['child'] = '';
 				$v_data['client_about'] = '';
 				$v_data['gender_id'] = "";
 				$v_data['client_looking_gender_id'] = "";
@@ -195,7 +201,6 @@ class Profile extends account
 	public function send_message($receiver_id, $page = NULL)
 	{
 		$v_data['smiley_location'] = $this->smiley_location;
-		
 		$v_data['receiver'] = $this->profile_model->get_client($receiver_id);
 		$v_data['sender'] = $this->profile_model->get_client($this->client_id);
 		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
@@ -321,7 +326,8 @@ class Profile extends account
 		$v_data['neighbourhoods_array'] = '';
 		
 		//initialize required variables
-		$v_data['neighbourhood_id_error'] = '';
+		$v_data['parent_error'] = '';
+		$v_data['child_error'] = '';
 		$v_data['client_about_error'] = '';
 		$v_data['client_dob1_error'] = '';
 		$v_data['client_dob2_error'] = '';
@@ -334,16 +340,32 @@ class Profile extends account
 		$client_query = $this->profile_model->get_client($this->client_id);
 		$row = $client_query->row();
 		$v_data['profile_image_location'] = $this->profile_image_location.$row->client_image;
-		$v_data['neighbourhood_id'] = $row->neighbourhood_id;
+		$neighbourhood_id = $row->neighbourhood_id;
 		$v_data['gender_id'] = $row->gender_id;
 		$v_data['client_about'] = $row->client_about;
 		$v_data['client_looking_gender_id'] = $row->client_looking_gender_id;
 		$v_data['age_group_id'] = $row->age_group_id;
 		$v_data['encounter_id'] = $row->encounter_id;
+		$v_data['current_password'] = $row->client_password;
 		$client_dob = $row->client_dob;
 		$v_data['client_dob1'] = date('d',strtotime($client_dob));
 		$v_data['client_dob2'] = date('m',strtotime($client_dob));
 		$v_data['client_dob3'] = date('Y',strtotime($client_dob));
+		
+		//check if neighbourhood is parent
+		$parent = $this->profile_model->is_parent($neighbourhood_id);
+		
+		if($parent == 0)
+		{
+			$v_data['parent'] = $neighbourhood_id;
+			$v_data['child'] = '';
+		}
+		
+		else
+		{
+			$v_data['parent'] = $parent;
+			$v_data['child'] = $neighbourhood_id;
+		}
 		
 		//upload image if it has been selected
 		$response = $this->profile_model->upload_profile_image($this->profile_image_path, $row->client_image, $row->client_thumb);
@@ -359,7 +381,8 @@ class Profile extends account
 		}
 		
 		$this->form_validation->set_error_delimiters('', '');
-		$this->form_validation->set_rules('neighbourhood_id', 'Neighbourhood', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('parent', 'Neighbourhood', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('child', '', 'trim|xss_clean');
 		$this->form_validation->set_rules('client_about', 'About you', 'trim|required|min_length[20]|xss_clean');
 		$this->form_validation->set_rules('client_dob1', 'Day of birth', 'trim|required|greater_than[0]|less_than[32]|xss_clean');
 		$this->form_validation->set_rules('client_dob2', 'Month of birth', 'trim|required|greater_than[0]|less_than[13]|xss_clean');
@@ -389,7 +412,8 @@ class Profile extends account
 		if(!empty($validation_errors))
 		{
 			//create errors
-			$v_data['neighbourhood_id_error'] = form_error('neighbourhood_id');
+			$v_data['parent_error'] = form_error('parent');
+			$v_data['child_error'] = form_error('child');
 			$v_data['client_about_error'] = form_error('client_about');
 			$v_data['client_dob1_error'] = form_error('client_dob1');
 			$v_data['client_dob2_error'] = form_error('client_dob2');
@@ -400,7 +424,8 @@ class Profile extends account
 			$v_data['encounter_id_error'] = form_error('encounter_id');
 			
 			//repopulate fields
-			$v_data['neighbourhood_id'] = set_value('neighbourhood_id');
+			$v_data['parent'] = set_value('parent');
+			$v_data['child'] = set_value('child');
 			$v_data['client_about'] = set_value('client_about');
 			$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
 			$v_data['gender_id'] = set_value('gender_id');
@@ -440,5 +465,41 @@ class Profile extends account
 		
 		$data['title'] = $this->site_model->display_page_title();
 		$this->load->view('templates/general_page', $data);
+	}
+    
+	/*
+	*
+	*	Update a user's password
+	*
+	*/
+	public function update_password()
+	{
+		//form validation rules
+		$this->form_validation->set_rules('current_password', 'Current Password', 'required|xss_clean');
+		$this->form_validation->set_rules('new_password', 'New Password', 'required|xss_clean');
+		$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|xss_clean');
+		
+		//if form has been submitted
+		if ($this->form_validation->run() == FALSE)
+		{
+			$this->session->set_userdata('error_message', validation_errors());
+		}
+		
+		else
+		{
+			//update password
+			$update = $this->profile_model->edit_password($this->client_id);
+			if($update['result'])
+			{
+				$this->session->set_userdata('success_message', 'Your password has been successfully updated');
+			}
+			
+			else
+			{
+				$this->session->set_userdata('error_message', $update['message']);
+			}
+		}
+		
+		redirect('my-profile');
 	}
 }

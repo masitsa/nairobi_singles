@@ -72,16 +72,122 @@ class Subscription extends account
 		$transaction_tracking_id = $payment_data['pesapal_transaction_tracking_id'];
 		$client_credit_id = $payment_data['pesapal_merchant_reference'];
 		
-		if($this->payments_model->activate_payment($transaction_tracking_id, $client_credit_id))
+		//check to see if the payment was successfully made
+		$response = $this->payments_model->get_pesapal_payment($transaction_tracking_id, $client_credit_id);
+		
+		if($response[1] == 'COMPLETED')
 		{
-			$this->session->set_userdata('success_message', 'Your payment has been received successfully');
+			if($this->payments_model->activate_payment($transaction_tracking_id, $client_credit_id))
+			{
+				$this->session->set_userdata('success_message', 'Your payment has been received successfully');
+			}
+			
+			else
+			{
+				$this->session->set_userdata('error_message', 'Unable to complete your payment. Please contact an administrator');
+			}
+			redirect('credits');
 		}
 		
 		else
 		{
-			$this->session->set_userdata('error_message', 'Unable to complete your payment. Please contact an administrator');
+			$this->payments_model->update_payment_response($transaction_tracking_id, $client_credit_id);
+			
+			$this->session->set_userdata('transaction_tracking_id', $transaction_tracking_id);
+			$this->session->set_userdata('client_credit_id', $client_credit_id);
+			redirect('process-payment');
 		}
-		redirect('credits');
+	}
+	
+	public function process_payment()
+	{
+		$data['content'] = $this->load->view('subscription/processing', '', true);
+		$data['title'] = $this->site_model->display_page_title();
+		$this->load->view('templates/general_page', $data);
+	}
+	
+	public function check_payment($count)
+	{
+		$transaction_tracking_id = $this->session->userdata('pesapal_transaction_tracking_id');
+		$client_credit_id = $this->session->userdata('client_credit_id');
+		
+		$count++;
+		
+		$response = $this->payments_model->get_pesapal_payment($transaction_tracking_id, $client_credit_id);
+		$status = $response[1];
+		
+		if($response[1] == 'COMPLETED')
+		{
+			if($this->payments_model->activate_payment($transaction_tracking_id, $client_credit_id))
+			{
+				$this->session->set_userdata('success_message', 'Your payment has been received successfully');
+			}
+			
+			else
+			{
+				$this->session->set_userdata('error_message', 'Unable to complete your payment. Please contact an administrator');
+			}
+			echo 'true';
+			
+			$this->session->unset_userdata('transaction_tracking_id', $transaction_tracking_id);
+			$this->session->unset_userdata('client_credit_id', $client_credit_id);
+		}
+		
+		else if($count == 11)
+		{
+			$this->session->set_userdata('error_message', 'Unable to complete your payment. Kindly ensure that you followed the steps provided in Pesapal and entered the correct transaction number');
+			echo 'true';
+			
+			$this->session->unset_userdata('transaction_tracking_id', $transaction_tracking_id);
+			$this->session->unset_userdata('client_credit_id', $client_credit_id);
+		}
+		
+		else
+		{
+			echo $count;
+		}
+	}
+	
+	public function check_payment2()
+	{
+		/*$this->session->set_userdata('transaction_tracking_id', '2e39abc3-267c-4f21-84a6-e6d3f0c778c');
+		$this->session->set_userdata('client_credit_id', '23');*/
+		$status = '';
+		$count = 0;
+		$transaction_tracking_id = $this->session->userdata('pesapal_transaction_tracking_id');
+		$client_credit_id = $this->session->userdata('client_credit_id');
+		
+		while($status != 'COMPLETED')
+		{
+			$count++;
+			//echo $count.'<br/>';
+			$response = $this->payments_model->get_pesapal_payment($transaction_tracking_id, $client_credit_id);
+			$status = $response[1];
+			
+			if($response[1] == 'COMPLETED')
+			{
+				if($this->payments_model->activate_payment($transaction_tracking_id, $client_credit_id))
+				{
+					$this->session->set_userdata('success_message', 'Your payment has been received successfully');
+				}
+				
+				else
+				{
+					$this->session->set_userdata('error_message', 'Unable to complete your payment. Please contact an administrator');
+				}
+				echo 'true';
+			}
+			
+			if($count == 1000000)
+			{
+				$this->session->set_userdata('error_message', 'Unable to complete your payment. Kindly ensure that you followed the steps provided in Pesapal and entered the correct transaction number');
+				echo 'false';
+				break;
+			}
+		}
+			
+		$this->session->unset_userdata('transaction_tracking_id', $transaction_tracking_id);
+		$this->session->unset_userdata('client_credit_id', $client_credit_id);
 	}
 }
 ?>

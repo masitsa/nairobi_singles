@@ -62,6 +62,7 @@ $route['messages/inbox/(:any)'] = 'site/messages/view_message/$1';
 
 $route['credits'] = 'site/subscription/subscribe';
 $route['payment'] = 'site/subscription/payment';
+$route['process-payment'] = 'site/subscription/process_payment';
 
 $route['forgot-password'] = 'login/forgot_password';
 
@@ -73,6 +74,7 @@ $route['sign-out'] = 'login/logout_user';
 $route['join'] = 'login/register_user';
 $route['register/about-you'] = 'site/profile/about_you';
 $route['my-profile'] = 'site/profile/edit_profile';
+$route['update-password'] = 'site/profile/update_password';
 
 /*
 *	Account Routes
