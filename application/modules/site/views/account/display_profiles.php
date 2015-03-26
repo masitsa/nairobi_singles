@@ -27,11 +27,11 @@
 					//check if user is online
 					if(!empty($time_difference) && ($time_difference <= 10))
 					{
-						$online = '<span style="color:green">Online</span>';
+						$online = '<span class="badge online">Online</span>';
 					}
 					else
 					{
-						$online = '';
+						$online = '<span class="badge offline">Offline</span>';
 					}
 					
 					//check if profile is liked
@@ -75,7 +75,7 @@
 					{
 						$actions = '
 								<a class="btn btn-warning" href="'.site_url().'credits"> 
-									<span><i class="fa fa-money"></i> Purchase credits </span> 
+									<span><i class="fa fa-money"></i> Top up chatcredits </span> 
 								</a>';
 					}
 					
@@ -85,6 +85,7 @@
 						<div class="product">
 							<div class="image"> 
 								<a href="'.site_url().'browse/'.$web_name.'"><img src="'.$image.'" alt="img" class="img-responsive"></a>
+								'.$online.'
 							</div>
 							
 							<div class="description">
@@ -94,7 +95,6 @@
 								<div style="margin-top: -20px; min-height: 100px;">
 									<br/><strong>Seeking </strong>'.$client_looking_gender_name.' for '.$encounter_name.'
 									<br/><strong>Location:</strong> '.$neighbourhood_name.'
-									<br/>'.$online.'
 								</div>
 							</div>
 							

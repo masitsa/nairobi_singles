@@ -74,7 +74,7 @@
 							else
 							{
 								?>
-                                <a class="btn btn-block btn-lg btn-warning" href="<?php echo site_url().'credits';?>"><span><i class="fa fa-money"></i> Purchase credits to send messages</span> </a>
+                                <a class="btn btn-block btn-lg btn-warning" href="<?php echo site_url().'credits';?>"><span><i class="fa fa-money"></i> Top up chatcredits</span> </a>
                                 <?php
 							}
 							

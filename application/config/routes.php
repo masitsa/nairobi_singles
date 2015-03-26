@@ -45,6 +45,8 @@ $route['404_override'] = '';
 *	Site Routes
 */
 $route['home'] = 'site/home_page';
+$route['terms'] = 'site/terms';
+$route['privacy'] = 'site/privacy';
 $route['browse'] = 'site/account/profiles/__';
 $route['browse/filter-age/(:any)'] = 'site/account/profiles/__/__/__/$1/__/created';
 $route['browse/filter-age'] = 'site/account/filter_age';

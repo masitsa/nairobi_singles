@@ -1668,9 +1668,13 @@ legend {
 	border-radius: 4px;
 }
 .description {
-	margin: 0 4px 0 5px;
+	margin: -3em 4px 0 5px;
 	min-height: 107px;
 }
+
+.image .badge{position: relative;top: -3em;}
+.online{background-color:#2ECC71;}
+
 .promotion {
 	line-height: 18px;
 }

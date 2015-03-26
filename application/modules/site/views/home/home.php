@@ -18,3 +18,8 @@
     <!-- End Container -->
 </div>
 <!-- End Home content -->
+
+<div class="center-align">
+	<a class="links" href="<?php echo site_url().'terms';?>" target="_blank">Terms & conditions</a>
+    <a class="links" href="<?php echo site_url().'privacy';?>" target="_blank">Privacy policy</a>
+</div>

@@ -237,6 +237,7 @@ class Profile extends account
 			$col_array = $this->table->make_columns($image_array, 12);
 			
 			$v_data['smiley_table'] = $this->profile_model->generate_emoticons($col_array);
+			$v_data['account_balance'] = $this->account_balance;
 			
 			echo $this->load->view('account/message', $v_data, true);
 		}

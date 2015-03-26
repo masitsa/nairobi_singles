@@ -31,7 +31,10 @@
     	<?php echo $this->load->view('modal_messages');?>
     </div>
     
-    <?php
+     <?php
+	if($account_balance > 0)
+	{
+		
     	echo form_open('site/profile/message_profile/2', array('class' => 'send_message'));
 		echo form_hidden('receiver_id', $receiver_id);
 	?>
@@ -48,7 +51,17 @@
         </div>
     </div>
     <!--userForm--> 
-	<?php echo form_close();?>
+	<?php echo form_close();
+	}
+	
+	else
+	{
+		?>
+		<a class="btn btn-block btn-lg btn-warning" href="<?php echo site_url().'credits';?>"><span><i class="fa fa-money"></i> Top up chatcredits</span> </a>
+		<?php
+	}
+	
+	?>
 </div>
 <div class="modal-footer">
     <!--<p class="text-center"> Not here before? <a data-toggle="modal"  data-dismiss="modal" href="#ModalSignup"> Sign Up. </a> <br>

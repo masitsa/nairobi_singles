@@ -43,6 +43,32 @@ class Site extends MX_Controller
 		$data['title'] = $this->site_model->display_page_title();
 		$this->load->view('templates/home_page', $data);
 	}
+    
+	/*
+	*
+	*	Terms Page
+	*
+	*/
+	public function terms() 
+	{
+		$data['content'] = $this->load->view('terms', '', true);
+		
+		$data['title'] = $this->site_model->display_page_title();
+		$this->load->view('templates/home_page', $data);
+	}
+    
+	/*
+	*
+	*	Privacy Page
+	*
+	*/
+	public function privacy() 
+	{
+		$data['content'] = $this->load->view('privacy', '', true);
+		
+		$data['title'] = $this->site_model->display_page_title();
+		$this->load->view('templates/home_page', $data);
+	}
 	
 	public function __get_payments()
 	{

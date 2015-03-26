@@ -344,7 +344,7 @@ class Account extends MX_Controller
 		//case of filter_encounters
 		if($encounter_id != '__')
 		{
-			$return = $this->profile_model->create_query_filter($encounter_id, 'client.encounter_id');
+			$return = $this->profile_model->create_query_filter($encounter_id, 'encounter.encounter_name');
 			$where .= $return['where'];
 			$v_data['encounters_array'] = $return['parameters'];
 		}

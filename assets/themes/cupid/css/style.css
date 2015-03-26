@@ -52,8 +52,8 @@ textarea{min-height:110px;}
 
 /*** b) Logo ***/
 /*.home-content{background:#d90000 url(../../../images/nairobi_skyline.png) no-repeat; background-position:bottom; width:100%; min-height: 372px; padding-top:1em;}*/
-.home-content{min-height: 500px; background: #660099 url("../../../images/nai.jpg") no-repeat fixed 0 0px / cover  rgba(0, 0, 0, 0); padding-top:4em; padding-bottom:1em;}
-.inner-content{min-height: 150px; background: #660099 url("../../../images/nai.jpg") no-repeat fixed 0 -106px / cover  rgba(0, 0, 0, 0); padding-top:2em; padding-bottom:1em;}
+.home-content{min-height: 500px; background-color: #660099; background: url("../../../images/nai.jpg") no-repeat fixed 0 0px / cover  rgba(0, 0, 0, 0); padding-top:4em; padding-bottom:1em;}
+.inner-content{min-height: 150px; background-color: #660099; background: url("../../../images/nai.jpg") no-repeat fixed 0 -106px / cover  rgba(0, 0, 0, 0); padding-top:2em; padding-bottom:1em;}
 .home-content h1, .home-content h2, .inner-content h1, .inner-content h2{margin: 0 auto; text-align:center;}
 .home-content h1, .inner-content h1{font-size:3em;}
 .home-content h2, .inner-content h2{margin-top: 2%;}
@@ -87,3 +87,7 @@ a.cupid:hover{color: #660099; text-decoration:none;}
 .home-links .btn{font-size: 1em; width: 200px; height:80px; margin-top: 10px;}
 .home-links .btn-sign-in{background-color:#fff; color:#FE0083;}
 .home-links .btn-join{background-color:#FE0083; color:#fff;}
+
+.reading p, .reading ul li{text-align: justify; font-size:0.8em;}
+.reading h3, .reading h4, a{color:#FE0083;}
+a.links{ font-size:0.8em; margin-right:10px;}

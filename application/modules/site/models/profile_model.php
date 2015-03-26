@@ -465,17 +465,17 @@ class Profile_model extends CI_Model
 			
 			if(isset($ages[1]))
 			{
-				$max_year = (date('Y') - $ages[0]).date('-m-d');
-				$min_year = (date('Y') - $ages[1]).date('-m-d');
+				$max_year = (date('Y') - $ages[0]).date('-m-d')+1;
+				$min_year = (date('Y') - $ages[1]).date('-m-d')-1;
 				
 				if($r == 0)
 				{
-					$where .= $table_field." BETWEEN '".$min_year."' AND '".$max_year."'";
+					$where .= " EXTRACT(YEAR FROM ".$table_field.") BETWEEN '".$min_year."' AND '".$max_year."'";
 				}
 				
 				else
 				{
-					$where .= ' OR '.$table_field." BETWEEN '".$min_year."' AND '".$max_year."'";
+					$where .= " OR  EXTRACT(YEAR FROM ".$table_field.") BETWEEN '".$min_year."' AND '".$max_year."'";
 				}
 			}
 			
@@ -485,12 +485,12 @@ class Profile_model extends CI_Model
 				
 				if($r == 0)
 				{
-					$where .= $table_field." > '".$max_year."'";
+					$where .= " EXTRACT(YEAR FROM ".$table_field.") > '".$max_year."'";
 				}
 				
 				else
 				{
-					$where .= ' OR '.$table_field." > '".$max_year."'";
+					$where .= " OR EXTRACT(YEAR FROM ".$table_field.") > '".$max_year."'";
 				}
 			}
 		}
