@@ -37,7 +37,7 @@ class Login extends MX_Controller
 		else
 		{
 			$response['message'] = 'fail';
-			$response['result'] = 'You have entered incorrect details. Please try again '.$client_email.$client_password;
+			$response['result'] = 'You have entered incorrect details. Please try again';
 		}
 		
 		echo $_GET['callback'].'(' . json_encode($response) . ')';
