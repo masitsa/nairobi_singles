@@ -43,26 +43,9 @@ class Account extends MX_Controller
 		//user has not logged in
 		else
 		{
-			$this->load->model('admin/file_model');
-			$this->load->model('admin/users_model');
-			$this->load->model('profile_model');
-			$this->load->model('site_model');
-			$this->load->model('payments_model');
-			$this->load->model('messages_model');
 			
-			$this->load->library('image_lib');
-			
-			//path to image directory
-			$this->messages_path = realpath(APPPATH . '../assets/messages');
-			$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
-			$this->profile_image_location = base_url().'assets/images/profile/';
-			$this->smiley_location = base_url().'assets/images/smileys/';
-			$this->client_id = 1;
-			 $this->account_balance = $this->payments_model->get_account_balance($this->client_id);
-			$this->image_size = 600;
-			$this->thumb_size = 80;
-			// $this->session->set_userdata('error_message', 'Please sign up/in to continue');
-			// redirect('sign-in');
+			$this->session->set_userdata('error_message', 'Please sign up/in to continue');
+			redirect('sign-in');
 		}
 	}
     
