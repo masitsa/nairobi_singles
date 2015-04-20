@@ -617,12 +617,9 @@ class Account extends MX_Controller
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
 		$v_data['account_balance'] = $this->account_balance;
 		
-		
-			 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
-			 $data['username']= $this->session->userdata('client_username');
-			  echo $_GET['callback'].'(' . json_encode($data) . ')';
-		  
-		 // var_dump($data) or die();
+		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		$data['username']= $this->session->userdata('client_username');
+		echo $_GET['callback'].'(' . json_encode($data) . ')';
 	}
     
 	/*
