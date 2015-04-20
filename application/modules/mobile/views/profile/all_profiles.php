@@ -86,17 +86,17 @@
 							<span><i class="fa fa-money"></i> Top up chatcredits </span> 
 						</a>';
 			}
-			
+			$number = '';
 			//number to display per line
-			if(isset($like_section))
-			{
-				$number = '<div class="item col-sm-6 col-lg-3 col-md-3 col-xs-12">';
-			}
+			// if(isset($like_section))
+			// {
+			// 	$number = '<div class="item col-sm-6 col-lg-3 col-md-3 col-xs-12">';
+			// }
 			
-			else
-			{
-				$number = '<div class="item col-sm-4 col-lg-4 col-md-4 col-xs-6">';
-			}
+			// else
+			// {
+			// 	$number = '<div class="item col-sm-4 col-lg-4 col-md-4 col-xs-6">';
+			// }
 			
 			echo
 				$number.'

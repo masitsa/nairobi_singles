@@ -636,6 +636,7 @@ class Account extends MX_Controller
 		
 		
 			 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+			 $data['username']= $this->session->userdata('client_username');
 			  echo $_GET['callback'].'(' . json_encode($data) . ')';
 		  
 		 // var_dump($data) or die();
