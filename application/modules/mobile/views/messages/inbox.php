@@ -74,16 +74,14 @@
             '
 	            <a href="'.site_url().'messages/inbox/'.$web_name.'" class="list-group-item">
 	                
-	                <div class="message-image col-md-2">
+	                <div class="message-image col-xs-2">
 						<img src="'.$image.'" alt="img" class="img-responsive">
 					</div> 
-	                <div class="name col-md-2" style="min-width: 120px; display: inline-block;">
+	                <div class="name col-xs-2">
 						'.$client_username.'						
 					</div> 
-	                <div class=" col-md-6">'.$mini_msg.'</div>
-	                <!--<span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> -->
+	                <div class=" col-xs-6">'.$mini_msg.'</div>
 	                <span class="badge">'.$date_display.'</span> 
-	                <!--<span class="pull-right"><span class="glyphicon glyphicon-paperclip"></span></span>-->
 	            </a>
 	            ';
         }
