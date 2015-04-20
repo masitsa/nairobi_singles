@@ -57,7 +57,7 @@
             
             //get receiver details
             $prods = $receiver_query->row();
-            $client_image = $this->profile_image_location.$prods->client_thumb;
+            $client_image = $prods->client_thumb;
             $client_dob = $prods->client_dob;
             $client_username = $prods->client_username;
             $age = $this->profile_model->calculate_age($client_dob);
@@ -72,16 +72,17 @@
             
             echo
             '
-	            <a href="'.site_url().'messages/view_message/'.$web_name.'" id="view_mm" class="list-group-item">
-	                
-	                <div class="message-image col-xs-2">
-						<img src="'.$image.'" alt="img" class="img-responsive">
-					</div> 
-	                <div class="name col-xs-2">
-						'.$client_username.'						
-					</div> 
-	                <div class=" col-xs-6">'.$mini_msg.'</div>
-	                <span class="badge">'.$date_display.'</span> 
+	            <a href="messages.html?web_name='.$web_name.'" class="list-group-item">
+	                <div class="row">
+						<div class="message-image col-xs-4">
+							<img src="'.$image.'" alt="img" class="img-responsive">
+							<div class="center-align">
+								'.$client_username.'						
+							</div>
+						</div>  
+						<div class=" col-xs-6">'.$mini_msg.'</div>
+						<span class="badge">'.$date_display.'</span> 
+					</div>
 	            </a>
 	            ';
         }
