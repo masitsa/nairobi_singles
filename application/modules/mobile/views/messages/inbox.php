@@ -72,7 +72,7 @@
             
             echo
             '
-	            <a href="'.site_url().'messages/inbox/'.$web_name.'" class="list-group-item">
+	            <a href="'.site_url().'messages/view_message/'.$web_name.'" id="view_mm" class="list-group-item">
 	                
 	                <!--<span class="glyphicon glyphicon-star-empty"></span>-->
 	                <span class="message-image">
