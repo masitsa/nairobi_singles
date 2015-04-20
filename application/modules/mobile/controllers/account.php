@@ -862,9 +862,14 @@ class Account extends MX_Controller
 		$v_data['account_balance'] = $this->account_balance;
 		$v_data['like_section'] = 1;
 		
-		$data['content'] = $this->load->view('account/likes', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		// $data['content'] = $this->load->view('account/likes', $v_data, true);
+		// $data['title'] = $this->site_model->display_page_title();
+		// $this->load->view('templates/general_page', $data);
+
+		 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		 $data['username']= $this->session->userdata('client_username');
+		  echo $_GET['callback'].'(' . json_encode($data) . ')';
+		  // var_dump($data) or die();
 	}
     
 	/*
@@ -951,9 +956,9 @@ class Account extends MX_Controller
 		$v_data['account_balance'] = $this->account_balance;
 		$v_data['like_section'] = 1;
 		
-		$data['content'] = $this->load->view('account/likes', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		$data['username']= $this->session->userdata('client_username');
+		echo $_GET['callback'].'(' . json_encode($data) . ')';
 	}
 	
 	public function error()
