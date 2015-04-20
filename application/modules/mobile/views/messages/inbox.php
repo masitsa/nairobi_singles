@@ -62,6 +62,7 @@
             $client_username = $prods->client_username;
             $age = $this->profile_model->calculate_age($client_dob);
 			$web_name = $this->profile_model->create_web_name($client_username);
+			$image = $this->profile_model->image_display($profile_image_path, $profile_image_location, $client_image);
 			
 			if($unread == 1)
 			{
@@ -72,14 +73,10 @@
             echo
             '
 	            <a href="'.site_url().'messages/inbox/'.$web_name.'" class="list-group-item">
-	                <div class="checkbox" style="float:left;">
-	                    <label>
-	                        <input type="checkbox">
-	                    </label>
-	                </div>
+	                
 	                <!--<span class="glyphicon glyphicon-star-empty"></span>-->
 	                <span class="message-image">
-						<img src="'.$client_image.'" alt="img" class="img-responsive">
+						<img src="'.$image.'" alt="img" class="img-responsive">
 					</span> 
 	                <span class="name" style="min-width: 120px; display: inline-block;">
 						'.$client_username.'						

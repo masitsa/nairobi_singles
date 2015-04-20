@@ -117,8 +117,7 @@ class Messages extends account
 		$v_data['messages_path'] = $this->messages_path;
 		$v_data['current_client_id'] = $this->client_id;
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
-		
+		$v_data['profile_image_path'] = $this->profile_image_path;
 
 		$data['result']= $this->load->view('messages/inbox', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
@@ -168,72 +167,7 @@ class Messages extends account
 		
 		echo json_encode($data);
 	}
-	public function message_profile($page = NULL)
-	{
-		$this->form_validation->set_error_delimiters('', '');
-		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');
-		
-		if($this->form_validation->run())
-		{
-			$data['client_message_details'] = $this->input->post('client_message_details');
-			$data['client_id'] = $this->client_id;
-			$data['receiver_id'] = $this->input->post('receiver_id');
-			$data['created'] = date('Y-m-d H:i:s');
-			$content = json_encode($data);
-			
-			//create file name
-			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'));
-			$file_path = $this->messages_path.'//'.$file_name;
-			$base_path = $this->messages_path;
-			
-			//check if file exists
-			if(!$this->file_model->check_if_file_exists($file_path, $base_path))
-			{
-				//create file if not exists
-				if($this->file_model->create_file($file_path, $base_path))
-				{
-					$this->file_model->write_to_file($file_path, $content);
-					
-					//bill client
-					if($this->payments_model->bill_client($this->client_id, $this->message_amount))
-					{
-					}
-					
-					else
-					{
-					}
-					$this->send_message($data['receiver_id'], $page);
-				}
-				
-				else
-				{
-					echo 'false';
-				}
-			}
-			
-			else
-			{
-				$this->file_model->write_to_file($file_path, $content);
-					
-				//bill client
-				if($this->payments_model->bill_client($this->client_id, $this->message_amount))
-				{
-				}
-				
-				else
-				{
-				}
-				$this->send_message($data['receiver_id'], $page);
-			}
-			
-			//$this->db->insert('client_message', $data);
-		}
-		
-		else
-		{
-			echo 'false';
-		}
-	}
+	
 	public function send_message($receiver_id, $page = NULL)
 	{
 		$v_data['smiley_location'] = $this->smiley_location;
