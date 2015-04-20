@@ -165,4 +165,181 @@ class Messages extends account
 		
 		echo json_encode($data);
 	}
+	public function message_profile($page = NULL)
+	{
+		$this->form_validation->set_error_delimiters('', '');
+		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');
+		
+		if($this->form_validation->run())
+		{
+			$data['client_message_details'] = $this->input->post('client_message_details');
+			$data['client_id'] = $this->client_id;
+			$data['receiver_id'] = $this->input->post('receiver_id');
+			$data['created'] = date('Y-m-d H:i:s');
+			$content = json_encode($data);
+			
+			//create file name
+			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'));
+			$file_path = $this->messages_path.'//'.$file_name;
+			$base_path = $this->messages_path;
+			
+			//check if file exists
+			if(!$this->file_model->check_if_file_exists($file_path, $base_path))
+			{
+				//create file if not exists
+				if($this->file_model->create_file($file_path, $base_path))
+				{
+					$this->file_model->write_to_file($file_path, $content);
+					
+					//bill client
+					if($this->payments_model->bill_client($this->client_id, $this->message_amount))
+					{
+					}
+					
+					else
+					{
+					}
+					$this->send_message($data['receiver_id'], $page);
+				}
+				
+				else
+				{
+					echo 'false';
+				}
+			}
+			
+			else
+			{
+				$this->file_model->write_to_file($file_path, $content);
+					
+				//bill client
+				if($this->payments_model->bill_client($this->client_id, $this->message_amount))
+				{
+				}
+				
+				else
+				{
+				}
+				$this->send_message($data['receiver_id'], $page);
+			}
+			
+			//$this->db->insert('client_message', $data);
+		}
+		
+		else
+		{
+			echo 'false';
+		}
+	}
+	public function send_message($receiver_id, $page = NULL)
+	{
+		$v_data['smiley_location'] = $this->smiley_location;
+		$v_data['receiver'] = $this->profile_model->get_client($receiver_id);
+		$v_data['sender'] = $this->profile_model->get_client($this->client_id);
+		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
+		$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
+		$v_data['profile_image_location'] = $this->profile_image_location;
+		
+		//make payment if message was sent
+		if($page > 0)
+		{
+		}
+		
+		if($page == 1)
+		{
+			$data['messages'] = $this->load->view('messages/message_details', $v_data, true);
+			$data['curr_message_count'] = $v_data['received_messages'];
+			$data['account_balance'] = $this->payments_model->get_account_balance($this->session->userdata('client_id'));
+			
+			echo json_encode($data);
+		}
+		
+		else if($page == 2)
+		{
+			$data['messages'] = $this->load->view('account/modal_messages', $v_data, true);
+			$data['curr_message_count'] = $v_data['received_messages'];
+			$data['account_balance'] = $this->payments_model->get_account_balance($this->session->userdata('client_id'));
+			
+			echo json_encode($data);
+		}
+		
+		else
+		{
+			//for smileys
+			$image_array = get_clickable_smileys($this->smiley_location, 'instant_message');
+			$col_array = $this->table->make_columns($image_array, 12);
+			
+			$v_data['smiley_table'] = $this->profile_model->generate_emoticons($col_array);
+			$v_data['account_balance'] = $this->account_balance;
+			
+			echo $this->load->view('account/message', $v_data, true);
+		}
+	}
+	
+	public function message_profile($page = NULL)
+	{
+		$this->form_validation->set_error_delimiters('', '');
+		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');
+		
+		if($this->form_validation->run())
+		{
+			$data['client_message_details'] = $this->input->post('client_message_details');
+			$data['client_id'] = $this->client_id;
+			$data['receiver_id'] = $this->input->post('receiver_id');
+			$data['created'] = date('Y-m-d H:i:s');
+			$content = json_encode($data);
+			
+			//create file name
+			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'));
+			$file_path = $this->messages_path.'//'.$file_name;
+			$base_path = $this->messages_path;
+			
+			//check if file exists
+			if(!$this->file_model->check_if_file_exists($file_path, $base_path))
+			{
+				//create file if not exists
+				if($this->file_model->create_file($file_path, $base_path))
+				{
+					$this->file_model->write_to_file($file_path, $content);
+					
+					//bill client
+					if($this->payments_model->bill_client($this->client_id, $this->message_amount))
+					{
+					}
+					
+					else
+					{
+					}
+					$this->send_message($data['receiver_id'], $page);
+				}
+				
+				else
+				{
+					echo 'false';
+				}
+			}
+			
+			else
+			{
+				$this->file_model->write_to_file($file_path, $content);
+					
+				//bill client
+				if($this->payments_model->bill_client($this->client_id, $this->message_amount))
+				{
+				}
+				
+				else
+				{
+				}
+				$this->send_message($data['receiver_id'], $page);
+			}
+			
+			//$this->db->insert('client_message', $data);
+		}
+		
+		else
+		{
+			echo 'false';
+		}
+	}
 }
