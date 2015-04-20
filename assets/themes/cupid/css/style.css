@@ -91,3 +91,8 @@ a.cupid:hover{color: #660099; text-decoration:none;}
 .reading p, .reading ul li{text-align: justify; font-size:0.8em;}
 .reading h3, .reading h4, a{color:#FE0083;}
 a.links{ font-size:0.8em; margin-right:10px;}
+@media (max-width: 414px) {
+	.home-content h1, .inner-content h1{font-size:2em;}
+	.home-links{margin-top: 2em;}
+	h2{font-size:1em;}
+}

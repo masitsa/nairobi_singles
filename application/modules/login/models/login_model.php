@@ -169,19 +169,6 @@ class Login_model extends CI_Model
 		$this->db->update('client', $data); 
 	}
 	
-	public function get_balance()
-	{
-		//select the user by email from the database
-		$this->db->select('SUM(price*quantity) AS total_orders');
-		$this->db->where('order_status = 2 AND orders.order_id = order_item.order_id');
-		$this->db->from('orders, order_item');
-		$query = $this->db->get();
-		
-		$result = $query->row();
-		
-		return $result->total_orders;
-	}
-	
 	/*
 	*	Retrieve a single user by their email
 	*	@param int $email
@@ -236,5 +223,29 @@ class Login_model extends CI_Model
 		{
 			return FALSE;
 		}
+	}
+	
+	public function get_new_orders()
+	{
+		$this->db->select('COUNT(client_id) AS total_clients');
+		$this->db->where('client_status = 1');
+		$query = $this->db->get('client');
+		
+		$result = $query->row();
+		
+		return $result->total_clients;
+	}
+	
+	public function get_balance()
+	{
+		//select the user by email from the database
+		$this->db->select('SUM(purchase_amount) AS total_payments');
+		$this->db->where('client_credit_status = 1');
+		$this->db->from('client_credit');
+		$query = $this->db->get();
+		
+		$result = $query->row();
+		
+		return $result->total_payments;
 	}
 }

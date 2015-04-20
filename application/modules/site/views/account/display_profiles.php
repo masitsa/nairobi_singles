@@ -1,4 +1,31 @@
 <div class="row  categoryProduct xsResponse clearfix">
+	<?php
+    	//error messages
+		if($this->session->userdata('error_message'))
+		{
+			?>
+			<div class="alert alert-danger">
+			  <?php 
+				echo $this->session->userdata('error_message');
+				$this->session->unset_userdata('error_message');
+			  ?>
+			</div>
+			<?php
+		}
+		
+		//success messages
+		if($this->session->userdata('success_message'))
+		{
+			?>
+			<div class="alert alert-success">
+			  <?php 
+				echo $this->session->userdata('success_message');
+				$this->session->unset_userdata('success_message');
+			  ?>
+			</div>
+			<?php
+		}
+	?>
       
       	<?php
         	if($profiles->num_rows() > 0)
@@ -42,11 +69,21 @@
 									<span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Unlike </span> 
 								</a>
 						';
+						$like2 = '
+								<a class="btn btn-default" href="'.site_url().'profile/unlike/'.$client_id.'"> 
+									<span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Unlike </span> 
+								</a>
+						';
 					}
 					else
 					{
 						$like = '
 								<a class="btn btn-primary like" href="'.$client_id.'"> 
+									<span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Like </span> 
+								</a>
+						';
+						$like2 = '
+								<a class="btn btn-primary" href="'.site_url().'profile/like/'.$client_id.'"> 
 									<span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Like </span> 
 								</a>
 						';
@@ -56,14 +93,14 @@
 					{
 						$actions = '
 							<div class="hide-mobile">
-								<span id="like_section">'.$like.'</span>
+								<span id="like_section'.$client_id.'">'.$like.'</span>
 								<a class="btn btn-success message" client_id="'.$client_id.' "data-toggle="modal"  data-dismiss="modal" href="#send-message"> 
 									<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
 								</a>
 							</div>
 							
 							<div class="show-mobile">
-								<span id="like_section">'.$like.'</span>
+								<span id="like_section'.$client_id.'">'.$like2.'</span>
 								<a class="btn btn-success" href="'.site_url().'messages/inbox/'.$web_name.'"> 
 									<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
 								</a>
@@ -79,9 +116,19 @@
 								</a>';
 					}
 					
+					//number to display per line
+					if(isset($like_section))
+					{
+						$number = '<div class="item col-sm-6 col-lg-3 col-md-3 col-xs-12">';
+					}
+					
+					else
+					{
+						$number = '<div class="item col-sm-4 col-lg-4 col-md-4 col-xs-6">';
+					}
+					
 					echo
-					'
-					<div class="item col-sm-4 col-lg-4 col-md-4 col-xs-6">
+						$number.'
 						<div class="product">
 							<div class="image"> 
 								<a href="'.site_url().'browse/'.$web_name.'"><img src="'.$image.'" alt="img" class="img-responsive"></a>

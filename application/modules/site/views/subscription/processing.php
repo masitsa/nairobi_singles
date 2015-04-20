@@ -32,13 +32,13 @@
 			var check_count = parseInt($('#check_count').val());
 			$.ajax({
 				type:'POST',
-				url: '<?php echo site_url();?>site/subscription/check_payment/'+check_count,
+				url: '<?php echo site_url();?>site/subscription/check_payment/'+check_count+'/<?php echo $transaction_tracking_id;?>/<?php echo $client_credit_id;?>',
 				cache:false,
 				contentType: false,
 				processData: false,
 				success:function(data)
 				{
-					if(check_count == 10)
+					if(data == 'true')
 					{
 						window.location.href = '<?php echo site_url();?>credits';
 						

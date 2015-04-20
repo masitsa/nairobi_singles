@@ -75,20 +75,22 @@
                 <?php
 				foreach($credit_types->result() as $credit_type_data)
 				{
+					$credit_type_id = $credit_type_data->credit_type_id;
 					$credit_type_name = $credit_type_data->credit_type_name;
 					$credit_type_amount = $credit_type_data->credit_type_amount;
 					$credit_type_credits = $credit_type_data->credit_type_credits;
-					$credit_type_description = $credit_type_data->credit_type_description;
+					$credit_type_description = 'Purchase to receive '.$credit_type_credits.' chatcredits';//$credit_type_data->credit_type_description;
 					$web_name = str_replace(" ", "+", $credit_type_name);
 					
 					echo form_open($this->uri->uri_string(), array('class' => 'form-horizontal', 'role' => 'form'));
 					echo form_hidden('type', 'MERCHANT');
+					echo form_hidden('credit_type_id', $credit_type_id);
 					echo form_hidden('credit_type_amount', $credit_type_amount);
 					echo form_hidden('credit_type_credits', $credit_type_credits);
 					echo form_hidden('description', $credit_type_description);
 					
 					?>
-                    <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="col-xs-12 col-sm-6 col-md-4">
                         <div class="thumbnail">
                             <img src="http://placehold.it/300x200&text=<?php echo $credit_type_name;?>" alt="<?php echo $web_name;?>">
                             <div class="caption">
@@ -118,9 +120,10 @@
                         <table class="table table-condensed table-striped table-hover">
                         	<tr>
                             	<th>#</th>
-                            	<th>Created</th>
-                            	<th>Credits</th>
+                            	<th>Purchased</th>
                             	<th>Status</th>
+                            	<th>Credits</th>
+                            	<th></th>
                             </tr>
                         <?php
 						$total = 0;
@@ -129,6 +132,8 @@
 						{
 							$count++;
 							$client_credit_amount = $cred->client_credit_amount;
+							$client_credit_id = $cred->client_credit_id;
+							$transaction_tracking_id = $cred->transaction_tracking_id;
 							$client_credit_status = $cred->client_credit_status;
 							$created = date('jS M Y H:i a',strtotime($cred->created));
 							
@@ -136,26 +141,29 @@
 							{
 								$total += $client_credit_amount;
 								$status = '<span class="label label-success">Active</span>';
+								$button = '';
 							}
 							
 							else
 							{
-								$status = '<span class="label label-danger">Disabled</span>';
+								$status = '<span class="label label-danger">Pending</span>';
+								$button = '<a href="'.site_url().'process-payment/'.$transaction_tracking_id.'/'.$client_credit_id.'" class="btn btn-danger btn-sm">Check payment</a>';
 							}
 							
 							?>
                             <tr>
                             	<td><?php echo $count;?></td>
                             	<td><?php echo $created;?></td>
-                            	<td><?php echo $client_credit_amount;?></td>
                             	<td><?php echo $status;?></td>
+                            	<td><?php echo $client_credit_amount;?></td>
+                            	<td><?php echo $button;?></td>
                             </tr>
                             <?php
 						}
 							
 						?>
 						<tr>
-							<td colspan="3">Total</td>
+							<td colspan="4">Total</td>
 							<td><?php echo $total;?></td>
 						</tr>
                         </table>

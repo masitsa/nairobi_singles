@@ -81,7 +81,7 @@ class Login extends MX_Controller {
 					$this->session->set_userdata('success_message', 'You have successfully created your account. We need some info from you so that we can link you with people looking for you.');
 					
 					$this->load->model('site/payments_model');
-					//grant 300 chat credits for the first 100 users
+					//grant 100 chat credits for the first 100 users
 					if($this->payments_model->first_hundred($this->session->userdata('client_id')))
 					{
 					}

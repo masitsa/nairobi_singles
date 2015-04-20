@@ -48,6 +48,15 @@
     <div >
         <div >
         	<input name="submit" class="btn  btn-block btn-lg btn-primary" value="Send message" type="submit">
+							
+            <div class="alert alert-warning" style="margin-top:10px;">
+                <strong><i class="fa fa-lightbulb-o"></i> Safety tips</strong><br />
+                <ol>
+                    <li>1. Always meet in public places</li>
+                    <li>2. Never sent money to someone you don't know</li>
+                    <li>3. Be careful who share your personal contacts with</li>
+                </ol>
+            </div>
         </div>
     </div>
     <!--userForm--> 

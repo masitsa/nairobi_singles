@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <!-- Title and other stuffs -->
-  <title>Login</title>
+  <title>Nairobisingles| Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-md-12">
         <!-- Widget starts -->
-            <div class="logo"><a href="<?php echo site_url();?>" class="navbar-brand"><span class="bold">E</span>commerce <span class="bold">CMS</span></a></div>
+            <div class="logo"><a href="<?php echo site_url();?>" class="navbar-brand"><span class="bold">N</span>airobi<span class="bold">S</span>ingles <span class="bold">CMS</span></a></div>
             <div class="widget">
               <!-- Widget head -->
               <div class="widget-head">

@@ -15,6 +15,7 @@
 |
 */
 $config['base_url']	= 'http://localhost/nairobi_singles/';
+#$config['base_url']	= 'https://www.nairobisingles.com/';
 #$config['base_url']	= 'http://development.nairobisingles.com/';
 
 /*
@@ -127,7 +128,7 @@ $config['subclass_prefix'] = 'MY_';
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-_';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-@&=[]';
 
 
 /*

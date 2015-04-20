@@ -211,3 +211,4 @@
         </div>
     </div>
 </div>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>

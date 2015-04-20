@@ -45,10 +45,10 @@
 						echo form_open($this->uri->uri_string(), $attributes);
 					?>
                     	<div class="row">
-                        	<div class="col-md-6 col-md-offset-3">
+                        	<div class="col-md-7 col-md-offset-1">
                                 
                                 <div class="form-group">
-                                    <label for="client_email" class="col-sm-5 control-label">Email <span class="required">*</span></label>
+                                    <label for="client_email" class="col-md-5 col-sm-3 control-label">Email <span class="required">*</span></label>
                                     <div class="col-sm-7">
                                     	<?php
 											//case of an input error
@@ -69,12 +69,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-7 col-md-offset-5">
+                                    <div class="col-md-7 col-md-offset-5 col-sm-7 col-sm-offset-3">
                                     	<button type="submit" class="btn btn-default join-button2">Reset password</button>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-7 col-md-offset-5">
+                                    <div class="col-md-7 col-md-offset-5 col-sm-7 col-sm-offset-3">
                                     	<div class="center-align">
                                             <p>Don't have an account?</p>
                                             <a href="<?php echo site_url();?>join" class="cupid">Join</a>
@@ -88,3 +88,4 @@
             </div><!-- End row -->
         </div>
     </div>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>

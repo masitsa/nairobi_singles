@@ -9,7 +9,7 @@
         <!-- Motto -->
         <div class="row">
             <div class="col-md-12">
-                <h2>Join, meet, date</h2>
+                <h2>love, friendship, casual encounters</h2>
             </div>
         </div>
         <!-- End Motto -->

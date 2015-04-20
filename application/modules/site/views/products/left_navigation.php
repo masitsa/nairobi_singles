@@ -52,13 +52,13 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseCategory" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-age" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Aged between
             </a> 
             </h4>
           </div>
           
-          <div id="collapseCategory" class="panel-collapse collapse in">
+          <div id="collapse-age" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-age';?>" method="POST">
@@ -125,13 +125,13 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseCategory" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-encounter" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Who wants a 
             </a> 
             </h4>
           </div>
           
-          <div id="collapseCategory" class="panel-collapse collapse in">
+          <div id="collapse-encounter" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-encounter';?>" method="POST">
@@ -195,13 +195,13 @@
         <div class="panel panel-default" style="overflow:visible;">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseNeighbourhoods" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-neighbourhood" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Neighbourhoods 
             </a> 
             </h4>
           </div>
           
-          <div id="collapseNeighbourhoods" class="panel-collapse collapse in">
+          <div id="collapse-neighbourhood" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-neighbourhood';?>" method="POST">

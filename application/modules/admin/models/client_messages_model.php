@@ -1,12 +1,12 @@
 <?php
 
-class Categories_model extends CI_Model 
+class Client_messages_model extends CI_Model 
 {	
 	/*
-	*	Retrieve all categories
+	*	Retrieve all client_messages
 	*
 	*/
-	public function all_categories()
+	public function all_client_messages()
 	{
 		$this->db->where('category_status = 1');
 		$query = $this->db->get('category');
@@ -25,44 +25,20 @@ class Categories_model extends CI_Model
 		
 		return $query;
 	}
-	/*
-	*	Retrieve all parent categories
-	*
-	*/
-	public function all_parent_categories()
-	{
-		$this->db->where('category_status = 1 AND category_parent = 0');
-		$this->db->order_by('category_name', 'ASC');
-		$query = $this->db->get('category');
-		
-		return $query;
-	}
-	/*
-	*	Retrieve all children categories
-	*
-	*/
-	public function all_child_categories()
-	{
-		$this->db->where('category_status = 1 AND category_parent > 0');
-		$this->db->order_by('category_name', 'ASC');
-		$query = $this->db->get('category');
-		
-		return $query;
-	}
 	
 	/*
-	*	Retrieve all categories
+	*	Retrieve all client_messages
 	*	@param string $table
 	* 	@param string $where
 	*
 	*/
-	public function get_all_categories($table, $where, $per_page, $page)
+	public function get_all_client_messages($table, $where, $per_page, $page, $order, $order_method)
 	{
 		//retrieve all users
 		$this->db->from($table);
 		$this->db->select('*');
 		$this->db->where($where);
-		$this->db->order_by('category_name, category_parent');
+		$this->db->order_by($order, $order_method);
 		$query = $this->db->get('', $per_page, $page);
 		
 		return $query;
@@ -127,7 +103,7 @@ class Categories_model extends CI_Model
 	*	@param int $category_id
 	*
 	*/
-	public function get_sub_categories($category_id)
+	public function get_sub_client_messages($category_id)
 	{
 		//retrieve all users
 		$this->db->from('category');

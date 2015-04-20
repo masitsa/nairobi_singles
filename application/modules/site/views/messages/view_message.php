@@ -22,7 +22,7 @@
               </div>
         
               <div class="col-md-6">
-                    <a href="<?php echo $this->uri->uri_string();?>" class="btn btn-default pull-right" data-toggle="tooltip" title="Refresh">
+                    <a href="<?php echo site_url().$this->uri->uri_string();?>" class="btn btn-default pull-right" data-toggle="tooltip" title="Refresh">
                            <span class="glyphicon glyphicon-refresh"></span>   
                     </a>
                </div>
@@ -64,9 +64,16 @@
 								</div>
 							</div>
 							
-							<div >
                             <input name="submit" class="btn btn-block btn-lg btn-primary" value="Send message" type="submit">
-							</div>
+							
+                            <div class="alert alert-warning" style="margin-top:10px;">
+                            	<strong><i class="fa fa-lightbulb-o"></i> Safety tips</strong><br />
+                                <ol>
+                                	<li>1. Always meet in public places</li>
+                                    <li>2. Never sent money to someone you don't know</li>
+                                    <li>3. Be careful who share your personal contacts with</li>
+                                </ol>
+                            </div>
 							<?php 
 							echo form_close();
 							}
@@ -114,11 +121,11 @@
 		//check if new messages have been sent
 		var receiver_id = $('#ajax_receiver').val();
 		
-		(function worker() {
+		(function message_cheker() {
 			var prev_message_count = parseInt($('#prev_message_count').val());//count the number of messages displayed
 			
 			$.ajax({
-				url: '<?php echo site_url();?>site/profile/send_message/'+receiver_id+'/NULL /1', 
+				url: '<?php echo site_url();?>site/profile/send_message/'+receiver_id+'/1', 
 				cache:false,
 				contentType: false,
 				processData: false,
@@ -150,7 +157,7 @@
 				complete: function() 
 				{
 					// Schedule the next request when the current one's complete
-					setTimeout(worker, 2000);
+					setTimeout(message_cheker, 2000);
 				}
 				});
 			})();

@@ -1,5 +1,8 @@
 <?php
+	$liked_profiles = $this->profile_model->liked_profiles($this->session->userdata('client_id'));
+	$profile_likes = $this->profile_model->profile_likes($this->session->userdata('client_id'));
 	$account_balance = $this->payments_model->get_account_balance($this->session->userdata('client_id'));
+	$unread_messages = $this->messages_model->count_unread_messages($this->session->userdata('client_id'), realpath(APPPATH . '../assets/messages'));
 ?>
 <!-- Fixed navbar start -->
 <div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation">
@@ -59,9 +62,20 @@
       <ul class="nav navbar-nav">
         <li > <a href="<?php echo site_url()."browse";?>"> Browse </a> </li>
         
-        <li > <a href="<?php echo site_url()."messages/inbox";?>"> Messages </a> </li>
+        <li > <a href="<?php echo site_url()."messages/inbox";?>"> Messages <span id="message_badge"><?php echo $unread_messages;?></span></a> </li>
         
-        <!-- change width of megamenu = use class > megamenu-fullwidth, megamenu-60width, megamenu-40width -->
+        <li class="dropdown megamenu-80width "> <a data-toggle="dropdown" class="dropdown-toggle" href="<?php echo site_url()."";?>"> Likes <b class="caret"> </b> </a>
+          <ul class="dropdown-menu">
+            <li class="megamenu-content"> 
+                <ul class="col-md-12">
+                    <li class="col-md-4"> <a href="<?php echo site_url()."likes-me";?>"> <i class="glyphicon glyphicon-heart"/></i> Likes me (<?php echo $liked_profiles;?>)</a> </li>
+                    <li class="col-md-4"> <a href="<?php echo site_url()."i-like";?>"> <i class="glyphicon glyphicon-heart"/></i>
+ </i> Who I like (<?php echo $profile_likes;?>) </a> </li>
+                </ul>
+            </li>
+          </ul>
+        </li>
+        
         <li class="dropdown megamenu-80width "> <a data-toggle="dropdown" class="dropdown-toggle" href="<?php echo site_url()."";?>"> <?php echo $this->session->userdata('client_username');?> <b class="caret"> </b> </a>
           <ul class="dropdown-menu">
             <li class="megamenu-content"> 
@@ -83,7 +97,22 @@
         
         <div class="credit-box">
           <div class="input-group">
-          	<a href="<?php echo site_url().'credits';?>" class="credits-available"><span id="available_credit"><?php echo $account_balance?></span> credits available</a>
+          	<?php
+            if($account_balance > 0)
+			{
+				?>
+				<a href="<?php echo site_url().'credits';?>" class="credits-available"><span id="available_credit"><?php echo $account_balance?></span> credits available</a>
+				<?php
+			}
+			
+			else
+			{
+				?>
+				<span id="available_credit"><span style="color:white;"> <?php echo $account_balance?> credits available</span> <a href="<?php echo site_url().'credits';?>" class="btn btn-sm btn-warning">Top up credits</a>
+				<?php
+
+			}
+			?>
             <a href="<?php echo site_url()."sign-out";?>" style="color:white; margin-left:1em;"> <i class="glyphicon glyphicon-log-out"> </i> Sign out </a>
             <!-- <button class="btn btn-nobg" type="button"> <i class="fa fa-search"> </i> </button> -->
           </div>

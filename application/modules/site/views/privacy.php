@@ -172,3 +172,4 @@ We will notify the users via in site notification within 1 business day
         </div>
     </div>
 </div>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>

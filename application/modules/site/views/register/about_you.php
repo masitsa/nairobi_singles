@@ -100,9 +100,9 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="client_dob" class="col-sm-3 control-label">Your age
+                            <label for="client_dob" class="col-sm-3 col-xs-6 control-label">Your age
                                 <span class="required">*</span></label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob1_error))
@@ -120,7 +120,7 @@
                                     }
                                 ?>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob2_error))
@@ -138,7 +138,7 @@
                                     }
                                 ?>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob3_error))
@@ -159,7 +159,7 @@
                         </div>
                         
                         <div class="row">
-                        	<div class="col-md-4 col-md-offset-3">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <?php
@@ -193,7 +193,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-5" id="children_section2">
+                            <div class="col-md-5 col-sm-5" id="children_section2">
                             	<?php
 								$children_array[''] = '--All locations--';
 								
@@ -232,7 +232,7 @@
                         </div>
                         
                         <div class="row">
-                        	<div class="col-md-4 col-md-offset-3">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <?php
@@ -276,7 +276,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-5">
+                            <div class="col-md-5 col-sm-5">
                         
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -323,7 +323,7 @@
                         </div>
                         
                         <div class="row">
-                        	<div class="col-md-4 col-md-offset-3">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                 <?php
@@ -367,7 +367,7 @@
                         </div>
                        </div>
                             
-                            <div class="col-md-5">
+                            <div class="col-md-5 col-sm-5">
                         
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -454,3 +454,4 @@ $(document).on("change","select#filter_neighbourhood2",function()
 	return false;
 });
 </script>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>
