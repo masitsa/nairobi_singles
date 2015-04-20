@@ -103,7 +103,7 @@
 		
                       <li>
                         <div class="avatar">
-                            <img src="'.$image.'" class="img-responsive img-circle">
+                            <img src="'.$image.'" class="img-responsive">
                         </div>
                         <div class="details">
                          <div class="profile-name"><a href="'.site_url().'browse/'.$web_name.'">'.$client_username.'</a></div>
