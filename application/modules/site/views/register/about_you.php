@@ -100,9 +100,9 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="client_dob" class="col-sm-3 control-label">Your age
+                            <label for="client_dob" class="col-sm-3 col-xs-6 control-label">Your age
                                 <span class="required">*</span></label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob1_error))
@@ -120,7 +120,7 @@
                                     }
                                 ?>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob2_error))
@@ -138,7 +138,7 @@
                                     }
                                 ?>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-6">
                                 <?php
                                     //case of an input error
                                     if(!empty($client_dob3_error))
@@ -158,52 +158,81 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="neighbourhood_id" class="col-sm-3 control-label">You're from
-                                <span class="required">*</span></label>
-                            <div class="col-sm-9">
-                                <?php
-                                    //case of an input error
-                                    if(!empty($neighbourhood_id_error))
-                                    {
-                                        ?>
-                                        <select name="neighbourhood_id" class="form-control alert-danger">
-                                            <option value="">---Select neighbourhood---</option>
+                        <div class="row">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
                                         <?php
-                                    }
-                                    
-                                    else
-                                    {
-                                        ?>
-                                        <select name="neighbourhood_id" class="form-control">
-                                            <option value="">---Select neighbourhood---</option>
-                                        <?php
-                                    }
-                                    if($neighbourhoods_query->num_rows() > 0)
-                                    {
-                                        foreach($neighbourhoods_query->result() as $res)
-                                        {
-                                            $neighbourhood_id2 = $res->neighbourhood_id;
-                                            $neighbourhood_name = $res->neighbourhood_name;
-                                            
-                                            if($neighbourhood_id2 == $neighbourhood_id)
+                                            //case of an input error
+                                            if(!empty($parent_error))
                                             {
-                                                echo '<option value="'.$neighbourhood_id2.'" selected="selected">'.$neighbourhood_name.'</option>';
+                                                $js = 'id="filter_neighbourhood2" class="form-control alert-danger"';
                                             }
                                             
                                             else
                                             {
-                                                echo '<option value="'.$neighbourhood_id2.'">'.$neighbourhood_name.'</option>';
+                                                $js = 'id="filter_neighbourhood2" class="form-control"';
                                             }
-                                        }
-                                    }
-                                ?>
-                                </select>
+                                            
+                                            if($neighbourhoods_query['neighbourhood_parents']->num_rows() > 0)
+                                            {
+                                                $parents_array = array();
+                                                $parents_array[''] = '--You\'re from--';
+                                                
+                                                foreach($neighbourhoods_query['neighbourhood_parents']->result() as $res)
+                                                {
+                                                    $neighbourhood_id = $res->neighbourhood_id;
+                                                    $neighbourhood_name = $res->neighbourhood_name;
+                                                    $parents_array[$neighbourhood_id] = $neighbourhood_name;
+                                                }
+												
+                                                echo form_dropdown('parent', $parents_array, $parent, $js);
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-5 col-sm-5" id="children_section2">
+                            	<?php
+								$children_array[''] = '--All locations--';
+								
+								//case of an input error
+								if(!empty($child_error))
+								{
+									$js = 'class="form-control alert-danger"';
+								}
+								
+								else
+								{
+									$js = 'class="form-control"';
+								}
+								
+								if($neighbourhoods_query['neighbourhood_children']->num_rows() > 0)
+								{
+									$parents_array = array();
+									$children_array[''] = '--All locations--';
+									
+									foreach($neighbourhoods_query['neighbourhood_children']->result() as $res)
+									{
+										$neighbourhood_id = $res->neighbourhood_id;
+										$neighbourhood_parent = $res->neighbourhood_parent;
+										$neighbourhood_name = $res->neighbourhood_name;
+										
+										if($neighbourhood_parent == $parent)
+										{
+											$children_array[$neighbourhood_id] = $neighbourhood_name;
+										}
+									}
+									
+									echo form_dropdown('child', $children_array, $child, $js);
+								}
+								?>
                             </div>
                         </div>
                         
                         <div class="row">
-                        	<div class="col-md-4 col-md-offset-3">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <?php
@@ -247,7 +276,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-5">
+                            <div class="col-md-5 col-sm-5">
                         
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -294,7 +323,7 @@
                         </div>
                         
                         <div class="row">
-                        	<div class="col-md-4 col-md-offset-3">
+                        	<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                 <?php
@@ -338,7 +367,7 @@
                         </div>
                        </div>
                             
-                            <div class="col-md-5">
+                            <div class="col-md-5 col-sm-5">
                         
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -398,3 +427,31 @@
                 </div>
 			<?php echo form_close();?>
         </div>
+        
+<script type="text/javascript">
+
+$(document).on("change","select#filter_neighbourhood2",function()
+{
+	var category_parent = $(this).val();
+	
+	$.ajax({
+		type:'POST',
+		url: '<?php echo site_url();?>site/account/get_neighbourhood_children2/'+category_parent,
+		cache:false,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success:function(data)
+		{	
+			$("#children_section2").html(data);
+		},
+		error: function(xhr, status, error) 
+		{
+			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+		}
+	});
+	
+	return false;
+});
+</script>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>

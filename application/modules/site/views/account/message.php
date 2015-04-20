@@ -31,13 +31,16 @@
     	<?php echo $this->load->view('modal_messages');?>
     </div>
     
-    <?php
+     <?php
+	if($account_balance > 0)
+	{
+		
     	echo form_open('site/profile/message_profile/2', array('class' => 'send_message'));
 		echo form_hidden('receiver_id', $receiver_id);
 	?>
     <div class="form-group login-username">
         <div >
-            <textarea name="client_message_details" id="instant_message" class="form-control input"  size="20" placeholder="Enter message" required="required"></textarea>
+            <input type="text" name="client_message_details" id="instant_message" class="form-control input instant-message" placeholder="Enter message" required="required" />
             <?php echo $smiley_table; ?>
         </div>
     </div>
@@ -45,15 +48,35 @@
     <div >
         <div >
         	<input name="submit" class="btn  btn-block btn-lg btn-primary" value="Send message" type="submit">
+							
+            <div class="alert alert-warning" style="margin-top:10px;">
+                <strong><i class="fa fa-lightbulb-o"></i> Safety tips</strong><br />
+                <ol>
+                    <li>1. Always meet in public places</li>
+                    <li>2. Never sent money to someone you don't know</li>
+                    <li>3. Be careful who share your personal contacts with</li>
+                </ol>
+            </div>
         </div>
     </div>
     <!--userForm--> 
-	<?php echo form_close();?>
+	<?php echo form_close();
+	}
+	
+	else
+	{
+		?>
+		<a class="btn btn-block btn-lg btn-warning" href="<?php echo site_url().'credits';?>"><span><i class="fa fa-money"></i> Top up chatcredits</span> </a>
+		<?php
+	}
+	
+	?>
 </div>
 <div class="modal-footer">
     <!--<p class="text-center"> Not here before? <a data-toggle="modal"  data-dismiss="modal" href="#ModalSignup"> Sign Up. </a> <br>
     <a href="forgot-password.html" > Lost your password? </a> </p>-->
-</div><script type="text/javascript">
+</div>
+<script type="text/javascript">
 	$(document).ready(function() {
 		
 		//keep div scrolled at the bottom
@@ -81,7 +104,7 @@
 					{
 						$('#prev_message_count').val(curr_message_count);
 						//display new message
-						$("#modal-message").html(data.messages);
+						$("#modal_messages").html(data.messages);
 						
 						//play message tone
 						var new_message = document.getElementById("new_message");
@@ -99,7 +122,7 @@
 				complete: function() 
 				{
 					// Schedule the next request when the current one's complete
-					setTimeout(worker, 5000);
+					setTimeout(worker, 2000);
 				}
 				});
 			})();

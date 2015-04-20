@@ -29,7 +29,7 @@
                     	<div class="row">
                         	<div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="client_email" class="col-sm-5 control-label">Email <span class="required">*</span></label>
+                                    <label for="client_email" class="col-md-5 col-sm-3 control-label">Email <span class="required">*</span></label>
                                     <div class="col-sm-7">
                                     	<?php
 											//case of an input error
@@ -51,7 +51,7 @@
                                 </div>
                                 
                             	<div class="form-group">
-                                    <label for="client_username" class="col-sm-5 control-label">Username <span class="required">*</span></label>
+                                    <label for="client_username" class="col-md-5 col-sm-3 control-label">Username <span class="required">*</span></label>
                                     <div class="col-sm-7">
                                     	<?php
 											//case of an input error
@@ -75,7 +75,7 @@
                             
                         	<div class="col-md-6">
                                  <div class="form-group">
-                                    <label for="client_password" class="col-sm-5 control-label">Password <span class="required">*</span></label>
+                                    <label for="client_password" class="col-md-5 col-sm-3 control-label">Password <span class="required">*</span></label>
                                     <div class="col-sm-7">
                                         <?php
                                             //case of an input error
@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="confirm_password" class="col-sm-5 control-label">Confirm password <span class="required">*</span></label>
+                                    <label for="confirm_password" class="col-md-5 col-sm-3 control-label">Confirm password <span class="required">*</span></label>
                                     <div class="col-sm-7">
                                     	<?php
 											//case of an input error
@@ -116,29 +116,28 @@
 										?>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                        	<div class="col-md-12">
-                            	
-                                <div class="center-align checkbox">
-									<?php
-                                        //case of an input error
-                                        if(!empty($client_agree_error))
-                                        {
-                                            ?>
-                                            <div class="required">You must agree to our terms of service</div>
-                                            <?php
-                                        }
-                                        
-                                        ?>
-                                        <div class="checkbox">
-                                            
-                                            <label>
-                                                <input type="checkbox" name="client_agree"> By clicking Join, you agree to our terms and conditions of service and you agree that you are at least 18 years or older  today.
-                                            </label>
+                                
+                            	<div class="form-group">
+                                    <div class="col-md-7 col-md-offset-5 col-sm-7 col-sm-offset-3">
+                                    	<div class="center-align checkbox">
+											<?php
+                                                //case of an input error
+                                                if(!empty($client_agree_error))
+                                                {
+                                                    ?>
+                                                    <div class="required">You must agree to our terms of service</div>
+                                                    <?php
+                                                }
+                                                
+                                                ?>
+                                                <div class="checkbox">
+                                                    
+                                                    <label>
+                                                        <input type="checkbox" name="client_agree"> By clicking Join, you agree to our terms and conditions of service and you agree that you are at least 18 years or older  today.
+                                                    </label>
+                                                </div>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -164,4 +163,5 @@
             </div><!-- End row -->
     </div>
 </div>
+<?php echo $this->load->view('site/home/security', '', TRUE);?>
         

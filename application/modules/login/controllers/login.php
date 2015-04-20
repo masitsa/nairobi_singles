@@ -79,6 +79,16 @@ class Login extends MX_Controller {
 				if($this->login_model->validate_client())
 				{
 					$this->session->set_userdata('success_message', 'You have successfully created your account. We need some info from you so that we can link you with people looking for you.');
+					
+					$this->load->model('site/payments_model');
+					//grant 100 chat credits for the first 100 users
+					if($this->payments_model->first_hundred($this->session->userdata('client_id')))
+					{
+					}
+					
+					else
+					{
+					}
 					redirect('register/about-you');
 				}
 				else
@@ -160,6 +170,10 @@ class Login extends MX_Controller {
 			else
 			{
 				$this->session->set_userdata('error_message', 'The email or password provided is incorrect. Please try again');
+				
+				//repopulate fields
+				$v_data['client_password'] = set_value('client_password');
+				$v_data['client_email'] = set_value('client_email');
 			}
 		}
 		else

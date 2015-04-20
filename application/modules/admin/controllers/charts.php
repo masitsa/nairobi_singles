@@ -13,6 +13,7 @@ class Charts extends admin {
 		//$this->load->model('charts_model');
 		//$this->load->model('dates_model');
 		$this->load->model('reports_model');
+		$this->load->model('clients_model');
 		$this->days = 7;
 	}
 	
@@ -151,27 +152,27 @@ class Charts extends admin {
 		echo json_encode($result);
 	}
 	
-	function orders_totals($timestamp)
+	function clients_totals($timestamp)
 	{
 		$date = gmdate("Y-m-d", ($timestamp/1000));
 		
 		//get all patient types
-		$status_result = $this->reports_model->get_all_order_types();
+		$genders_result = $this->clients_model->get_all_genders();
 		
 		//initialize required variables
 		$highest_bar = 0;
 		
-		if($status_result->num_rows() > 0)
+		if($genders_result->num_rows() > 0)
 		{
-			$result = $status_result->result();
+			$result = $genders_result->result();
 			
 			foreach($result as $res)
 			{				
-				$order_status_id = $res->order_status_id;
-				$order_status_name = $res->order_status_name;
+				$gender_id = $res->gender_id;
+				$gender_name = $res->gender_name;
 				
 				//get method total
-				$total = $this->reports_model->get_orders_total($order_status_id, $date);
+				$total = $this->reports_model->get_clients_total($gender_id, $date);
 				//mark the highest bar
 				if($total > $highest_bar)
 				{
@@ -179,75 +180,18 @@ class Charts extends admin {
 				}
 				
 				//prep data for the particular visit type
-				$result[strtolower($order_status_name)] = $total;
+				$result[strtolower($gender_name)] = $total;
 			}
 		}
 		$result['highest_bar'] = $highest_bar;//var_dump($result['bars']);
 		echo json_encode($result);
 	}
 	
-	function patient_type_totals2()
+	function credit_types_totals()
 	{
-		//get last 7 days
-		$period = $this->dates_model->last_seven_days();
-		
+		$this->load->model('credit_types_model');
 		//get all patient types
-		$visits_result = $this->reports_model->get_all_visit_types();
-		
-		//initialize required variables
-		$highest_bar = 0;
-		
-		if($visits_result->num_rows() > 0)
-		{
-			$result = $visits_result->result();
-			
-			foreach($result as $res)
-			{
-				$totals = '';
-				$r = 0;
-				
-				$visit_type_id = $res->visit_type_id;
-				$visit_type_name = $res->visit_type_name;
-				
-				//fetch visit for each day for the last 6 days
-				foreach( $period as $day) 
-				{
-					$date = $day->format( 'Y-m-d');
-				
-					//get method total
-					$total = $this->reports_model->get_visit_type_total($visit_type_id, $date);
-					
-					//mark the highest bar
-					if($total > $highest_bar)
-					{
-						$highest_bar = $total;
-					}
-					//echo $date." :: ".$r."<br/>";
-					if($r == $this->days)
-					{
-						$totals .= $total;
-					}
-					
-					else
-					{
-						$totals .= $total.',';
-					}
-					$r++;
-				}
-				
-				//prep data for the particular visit type
-				$result['bars'][strtolower($visit_type_name)] = $totals;
-			}
-		}
-		$result['highest_bar'] = $highest_bar;//var_dump($result['bars']);
-		echo json_encode($result);
-	}
-	
-	function products_totals()
-	{
-		$this->load->model('categories_model');
-		//get all patient types
-		$parents = $this->categories_model->all_parent_categories();
+		$parents = $this->credit_types_model->all_credit_types();
 		
 		//initialize required variables
 		$totals = '';
@@ -261,11 +205,11 @@ class Charts extends admin {
 			
 			foreach($result as $res)
 			{
-				$category_id = $res->category_id;
-				$category_name = $res->category_name;
+				$credit_type_id = $res->credit_type_id;
+				$credit_type_name = $res->credit_type_name;
 				
 				//get service total
-				$total = $this->reports_model->get_products_total($category_id);
+				$total = $this->reports_model->get_credit_types_total($credit_type_id);
 				
 				//mark the highest bar
 				if($total > $highest_bar)
@@ -276,19 +220,19 @@ class Charts extends admin {
 				if($r == $parents->num_rows())
 				{
 					$totals .= $total;
-					$names .= $category_name;
+					$names .= $credit_type_name;
 				}
 				
 				else
 				{
 					$totals .= $total.',';
-					$names .= $category_name.',';
+					$names .= $credit_type_name.',';
 				}
 				$r++;
 			}
 		}
 		
-		$result['total_categories'] = $parents->num_rows();
+		$result['total_credit_types'] = $parents->num_rows();
 		$result['names'] = $names;
 		$result['bars'] = $totals;
 		$result['highest_bar'] = $highest_bar;

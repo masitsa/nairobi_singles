@@ -90,30 +90,30 @@ class Reports_model extends CI_Model
 		return $query;
 	}
 	
-	public function get_orders_total($order_status_id, $date = NULL)
+	public function get_clients_total($gender_id, $date = NULL)
 	{
 		if($date == NULL)
 		{
 			$date = date('Y-m-d');
 		}
-		$where = 'created LIKE \''.$date.'%\' AND order_status = '.$order_status_id;
+		$where = 'created LIKE \''.$date.'%\' AND client.gender_id = '.$gender_id;
 		
-		$this->db->select('COUNT(order_id) AS total');
+		$this->db->select('COUNT(client_id) AS total');
 		$this->db->where($where);
-		$query = $this->db->get('orders');
+		$query = $this->db->get('client');
 		
 		$result = $query->row();
 		
 		return $result->total;
 	}
 	
-	public function get_products_total($category_id)
+	public function get_credit_types_total($credit_type_id)
 	{
-		$where = 'product.category_id = category.category_id AND product.product_id = order_item.product_id AND (category.category_id = '.$category_id.' OR category.category_parent = '.$category_id.') AND orders.order_status = 2 AND orders.order_id = order_item.order_id';
+		$where = 'client_credit.credit_type_id = '.$credit_type_id.' AND client_credit.client_credit_status = 1';
 		
-		$this->db->select('SUM(quantity*price) AS total');
+		$this->db->select('SUM(purchase_amount) AS total');
 		$this->db->where($where);
-		$query = $this->db->get('product, category, order_item, orders');
+		$query = $this->db->get('client_credit');
 		
 		$result = $query->row();
 		$total = $result->total;;

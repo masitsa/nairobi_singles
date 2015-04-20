@@ -30,7 +30,7 @@
                 <ul class="page-stats">
                     <li>
                         <div class="summary">
-                            <span>New orders</span>
+                            <span>Active clients</span>
                             <h3><?php echo $new_orders;?></h3>
                         </div>
                         <span id="sparklines1"></span>
@@ -38,7 +38,7 @@
                     <li>
                         <div class="summary">
                             <span>My balance</span>
-                            <h3>KES <?php echo $balance;?></h3>
+                            <h3>Ksh <?php echo $balance;?></h3>
                         </div>
                         <span id="sparklines2"></span>
                     </li>

@@ -7,7 +7,6 @@
           <ul>
             <li class="supportLi">
               <p> Contact us at </p>
-              <h4> <a class="inline" href="callto:+254721991399"> <strong> <i class="fa fa-phone"> </i> +254 721 991 399 </strong> </a> </h4>
               <h4> <a class="inline" href="mailto:info@nairobisingles.com"> <i class="fa fa-envelope-o"> </i> info@nairobisingles.com </a> </h4>
             </li>
           </ul>
@@ -84,7 +83,7 @@
 <!-- /.Send message end --> 
 <audio id="new_message" src="<?php echo base_url();?>assets/audio/new_message.mp3"></audio>
 
-
+<?php echo $this->load->view('site/home/security', '', TRUE);?>
 <!-- Le javascript
 ================================================== --> 
 
@@ -116,7 +115,7 @@
 <script src="<?php echo base_url()."assets/themes/tshop/";?>js/owl.carousel.min.js"></script> 
 
 <!-- jQuery minimalect // custom select   --> 
-<script src="<?php echo base_url()."assets/themes/tshop/";?>js/jquery.minimalect.min.js"></script> 
+<!-- <script src="<?php echo base_url()."assets/themes/tshop/";?>js/jquery.minimalect.min.js"></script> -->
 
 <!-- include touchspin.js // touch friendly input spinner component   --> 
 <script src="<?php echo base_url()."assets/themes/tshop/";?>js/bootstrap.touchspin.js"></script> 
@@ -136,19 +135,26 @@ $(document).on("click","a.like",function()
 		cache:false,
 		contentType: false,
 		processData: false,
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
 		success:function(data){
 			
 			if(data == "true")
 			{
-				$("#like_section").html('<a class="btn btn-default unlike" href="'+client_id+'"><span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Unlike </span></a>');
+				$("#like_section"+client_id).html('<a class="btn btn-default unlike" href="'+client_id+'"><span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Unlike </span></a>');
 			}
 			else
 			{
-				alert('Unable to like profile. '+data);
+				console.log(data);
+				window.location.href = '<?php echo site_url();?>error';
 			}
 		},
 		error: function(xhr, status, error) {
-			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
 		}
 	});
 	
@@ -168,19 +174,26 @@ $(document).on("click","a.unlike",function()
 		cache:false,
 		contentType: false,
 		processData: false,
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
 		success:function(data){
 			
 			if(data == "true")
 			{
-				$("#like_section").html('<a class="btn btn-primary like" href="'+client_id+'"><span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Like </span></a>');
+				$("#like_section"+client_id).html('<a class="btn btn-primary like" href="'+client_id+'"><span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Like </span></a>');
 			}
 			else
 			{
-				alert('Unable to unlike profile. '+data);
+				console.log('Unable to unlike profile. '+data);
+				window.location.href = '<?php echo site_url();?>error';
 			}
 		},
 		error: function(xhr, status, error) {
-			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
 		}
 	});
 	
@@ -198,12 +211,18 @@ $(document).on("click","a.message",function()
 		cache:false,
 		contentType: false,
 		processData: false,
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
 		success:function(data)
-		{	
+		{
 			$("#modal-message").html(data);
 		},
 		error: function(xhr, status, error) {
-			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
 		}
 	});
 	
@@ -225,6 +244,11 @@ $(document).on("submit","form.send_message",function(e)
 		contentType: false,
 		processData: false,
 		dataType: 'json',
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
 		success:function(data)
 		{	
 			if(data == "false")
@@ -232,7 +256,7 @@ $(document).on("submit","form.send_message",function(e)
 				$("#send_error").html('<div class="alert alert-danger">Unable to send message. Please try again</div>');
 			}
 			else
-			{
+			{//alert(data.messages);
 				var prev_message_count = parseInt($('#prev_message_count').val());//count the number of messages displayed
 				prev_message_count = prev_message_count + 1;
 				$('#prev_message_count').val(prev_message_count);
@@ -242,7 +266,8 @@ $(document).on("submit","form.send_message",function(e)
 			}
 		},
 		error: function(xhr, status, error) {
-			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
 		}
 	});
 	return false;
@@ -263,6 +288,11 @@ $(document).on("submit","form.send_message2",function(e)
 		contentType: false,
 		processData: false,
 		dataType: 'json',
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
 		success:function(data){
 			
 			if(data == "false")
@@ -280,56 +310,110 @@ $(document).on("submit","form.send_message2",function(e)
 			}
 		},
 		error: function(xhr, status, error) {
-			alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
 		}
 	});
 	return false;
 });
 
-//timer to check for new messages
-/*(function worker() {
-	// code you want to execute every second here
-	var receiver_id = $('#ajax_receiver').val();
-	var prev_message_count = parseInt($('#prev_message_count').val());//count the number of messages displayed
+//Like
+$(document).on("change","select#filter_neighbourhood",function()
+{
+	var category_parent = $(this).val();
 	
-	if(prev_message_count >= 0)
-	{
+	$.ajax({
+		type:'POST',
+		url: '<?php echo site_url();?>site/account/get_neighbourhood_children/'+category_parent,
+		cache:false,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
+		success:function(data)
+		{	
+			$("#children_section").html(data);
+		},
+		error: function(xhr, status, error) 
+		{
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
+		}
+	});
+	
+	return false;
+	
+});
+$(document).on("change","select#filter_neighbourhood2",function()
+{
+	var category_parent = $(this).val();
+	
+	$.ajax({
+		type:'POST',
+		url: '<?php echo site_url();?>site/account/get_neighbourhood_children2/'+category_parent,
+		cache:false,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		statusCode: {
+			302: function() {
+				window.location.href = '<?php echo site_url();?>error';
+			}
+		},
+		success:function(data)
+		{	
+			$("#children_section2").html(data);
+		},
+		error: function(xhr, status, error) 
+		{
+			console.log("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			window.location.href = '<?php echo site_url();?>error';
+		}
+	});
+	
+	return false;
+});
+
+$(document).ready(function() {
+	
+	(function check_new_messages() {
+		
 		$.ajax({
-			type:'POST',
-			url: '<?php echo site_url();?>site/profile/send_message/'+receiver_id+'/1',
+			url: '<?php echo site_url();?>site/messages/count_unread_messages',
 			cache:false,
 			contentType: false,
 			processData: false,
 			dataType: 'json',
-			success:function(data)
-			{
-					var curr_message_count = parseInt(data.curr_message_count);//count the number of messages received
-					
-					//if there is a new message
-					if(curr_message_count != prev_message_count)
-					{
-						//display new message
-						$("#modal-message").html(data.messages);
-						
-						//play message tone
-						var new_message = document.getElementById("new_message");
-						if (new_message.paused !== true)
-						{
-							new_message.pause();
-						}
-						else
-						{
-							new_message.play();
-						}
-					}
+			statusCode: {
+				302: function() {
+					window.location.href = '<?php echo site_url();?>error';
+				}
 			},
-			error: function(xhr, status, error) {
-				alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
+			success: function(data) 
+			{
+				$("#message_badge").html(data.unread_messages);
+
+			},
+			complete: function() 
+			{
+				// Schedule the next request when the current one's complete
+				setTimeout(check_new_messages, 3000);
 			}
-		});
-	}
-	
-    setTimeout(worker, 5000);
-})();*/
-// 1 second = 1000 milliseconds.
+			});
+		})();
+});
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-61276708-2', 'auto');
+  ga('send', 'pageview');
+
 </script>

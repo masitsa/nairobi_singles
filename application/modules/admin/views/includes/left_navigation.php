@@ -33,18 +33,16 @@
                 <li class="has_submenu">
                     <a href="#">
                         <!-- Menu name with icon -->
-                        <i class="icon-th"></i> Products
+                        <i class="icon-th"></i> Profiles
                         <!-- Icon for dropdown -->
                     </a>
                     <ul>
-                        <li><a href="<?php echo base_url()."all-brands";?>">Brands</a></li>
-                        <li><a href="<?php echo base_url()."all-categories";?>">Categories</a></li>
-                        <li><a href="<?php echo base_url()."all-features";?>">Features</a></li>
-                        <li><a href="<?php echo base_url()."all-orders";?>">Orders</a></li>
-                        <li><a href="<?php echo base_url()."all-products";?>">Products</a></li>
+                        <li><a href="<?php echo base_url()."all-clients";?>">Clients</a></li>
+                        <li><a href="<?php echo base_url()."all-messages";?>">Messages</a></li>
                     </ul>
                 </li>
 				<!-- End: Products Menu -->
+                <li><a href="#"><i class="icon-desktop"></i> Subscriptions</a></li>
 
             </ul>
         </div>

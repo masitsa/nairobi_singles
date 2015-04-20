@@ -85,7 +85,7 @@ $.ajax({
 /* Orders chart starts */
 //required variables
 var highest_bar;
-var pending = [], completed = [], cancelled = [];
+var man = [], woman = [];
 var current_date;
 
 //get the current day
@@ -94,7 +94,7 @@ var day = curr.getDate();
 var month = curr.getMonth()+1;
 var year = curr.getFullYear();
 var current_timestamp = get_date(year, month, day);
-var url = config_url+"admin/charts/orders_totals/"+current_timestamp;//alert(url);
+var url = config_url+"admin/charts/clients_totals/"+current_timestamp;//alert(url);
 	
 //get data for the last 7 days
 for(r = 0; r < 8; r++)
@@ -110,12 +110,11 @@ for(r = 0; r < 8; r++)
 		success:function(data){
 			
 			//add the data to the array
-			pending.push([current_timestamp, data.pending]);
-			completed.push([current_timestamp, data.completed]);
-			cancelled.push([current_timestamp, data.cancelled]);
+			man.push([current_timestamp, data.man]);
+			woman.push([current_timestamp, data.woman]);
 			
 			current_timestamp = current_timestamp - 86400000;
-			url = config_url+"admin/charts/orders_totals/"+current_timestamp;
+			url = config_url+"admin/charts/clients_totals/"+current_timestamp;
 		},
 		error: function(xhr, status, error) {
 			//alert(url);
@@ -130,16 +129,12 @@ $(function () {
 	var plot = $.plot($("#curve-chart"), 
 		[
 			{
-				data: pending,
-				label: "Pending"
+				data: man,
+				label: "Men"
 			},
 			{
-				data: completed, 
-				label: "Completed"
-			} ,
-			{
-				data: cancelled, 
-				label: "Cancelled"
+				data: woman, 
+				label: "Women"
 			}
 		],
 		
@@ -159,7 +154,7 @@ $(function () {
 		   },
 			grid: { hoverable: true, clickable: true, borderWidth:0 },
 			xaxis: {mode: "time",timeformat: "%d/%m/%y", axisLabel: "Day"},
-			yaxis: {axisLabel: "Total Orders"},
+			yaxis: {axisLabel: "Total profiles"},
 			colors: ["#fa3031", "#54728C", "#f0ad4e"]
 		}
 	);
@@ -228,7 +223,7 @@ $(function () {
 /* Bar Chart starts */
 $.ajax({
 	type:'POST',
-	url: config_url+"admin/charts/products_totals",
+	url: config_url+"admin/charts/credit_types_totals",
 	cache:false,
 	contentType: false,
 	processData: false,
@@ -237,7 +232,7 @@ $.ajax({
 		
 		var result_bars = data.bars;
 		var result_names = data.names;
-		var total_categories = data.total_categories;
+		var credit_types = data.credit_types;
 		
 		var result2 = result_bars.split(',').map(function(item) {
 			return parseInt(item, 10);
@@ -259,7 +254,7 @@ $.ajax({
 			
 			var d3 = [];
 			var ticks = [];
-			for(r = 0; r < parseInt(total_categories); r += 1)
+			for(r = 0; r < parseInt(credit_types); r += 1)
 			{
 				d3.push([r, parseInt(result2[r])]);
 				ticks.push([r, names[r]]);
@@ -289,10 +284,10 @@ $.ajax({
 						  fill: true,
 						  fillColor: { colors: [ { opacity: 0.9 }, { opacity: 0.8 } ] }
 					},
-					xaxis: {axisLabel: "Categories", ticks: ticks},
-					yaxis: {axisLabel: "Total Collected", 
+					xaxis: {axisLabel: "Credit types", ticks: ticks},
+					yaxis: {axisLabel: "Total payments", 
 						tickFormatter: function (v, axis) {
-							return "KSH "+v;
+							return "Ksh "+v;
 						}
 					}
 
@@ -319,7 +314,7 @@ $.ajax({
 		});
 	},
 	error: function(xhr, status, error) {
-		alert(config_url+"admin/charts/products_totals");
+		alert(config_url+"admin/charts/credit_types_totals");
 		//alert("XMLHttpRequest=" + xhr.responseText + "\ntextStatus=" + status + "\nerrorThrown=" + error);
 	}
 });

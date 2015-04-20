@@ -52,13 +52,13 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseCategory" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-age" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Aged between
             </a> 
             </h4>
           </div>
           
-          <div id="collapseCategory" class="panel-collapse collapse in">
+          <div id="collapse-age" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-age';?>" method="POST">
@@ -125,13 +125,13 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseCategory" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-encounter" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Who wants a 
             </a> 
             </h4>
           </div>
           
-          <div id="collapseCategory" class="panel-collapse collapse in">
+          <div id="collapse-encounter" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-encounter';?>" method="POST">
@@ -192,122 +192,104 @@
           </div>
         </div> <!--/Who wants a menu end--> 
        <!--Neighourhood--> 
-        <div class="panel panel-default">
+        <div class="panel panel-default" style="overflow:visible;">
           <div class="panel-heading">
             <h4 class="panel-title"> 
-            <a data-toggle="collapse"  href="#collapseNeighbourhoods" class="collapseWill"> 
+            <a data-toggle="collapse"  href="#collapse-neighbourhood" class="collapseWill"> 
             <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Neighbourhoods 
             </a> 
             </h4>
           </div>
           
-          <div id="collapseNeighbourhoods" class="panel-collapse collapse in">
+          <div id="collapse-neighbourhood" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked tree">
                 <form action="<?php echo site_url().'browse/filter-neighbourhood';?>" method="POST">
+                	<div class="row"><div class="col-md-12">
                 <?php
 					echo form_hidden('post_encounters', $post_encounters);
 					echo form_hidden('post_genders', $post_genders);
 					echo form_hidden('post_ages', $post_ages);
 
-					// if($neighbourhoods_query->num_rows() > 0)
-					// {
-					// 	foreach($neighbourhoods_query->result() as $res)
-					// 	{
-					// 		$neighbourhood_id = $res->neighbourhood_id;
-					// 		$neighbourhood_name = $res->neighbourhood_name;
-					// 		$web_name = $this->profile_model->create_web_name($neighbourhood_name);
-										
-					// 		if(is_array($neighbourhoods_array))
-					// 		{
-					// 			$total_neighbourhoods = count($neighbourhoods_array);
-					// 			$checked = '';
-								
-					// 			for($r = 0; $r < $total_neighbourhoods; $r++)
-					// 			{
-					// 				if($neighbourhoods_array[$r] == $web_name)
-					// 				{
-					// 					$checked = 'checked = "checked"';
-					// 					break;
-					// 				}
-					// 			}
-								
-								
-					// 			echo 
-					// 			'
-					// 				<div class="block-element">
-					// 					<input type="checkbox" name="neighbourhood_id[]" value="'.$web_name.'" id="neighbourhood_id'.$neighbourhood_id.'" '.$checked.'/>
-					// 					<label for="neighbourhood_id'.$neighbourhood_id.'"><span></span> '.$neighbourhood_name.'</label>
-					// 				</div>
-		
-					// 			';
-					// 		}
-							
-					// 		else
-					// 		{
-								
-					// 			echo 
-					// 			'
-					// 				<div class="block-element">
-					// 					<input type="checkbox" name="neighbourhood_id[]" value="'.$web_name.'" id="neighbourhood_id'.$neighbourhood_id.'"/>
-					// 					<label for="neighbourhood_id'.$neighbourhood_id.'"><span></span> '.$neighbourhood_name.'</label>
-					// 				</div>
-		
-					// 			';
-					// 		}
-					// 	}
-					// }
-					
-					$data = $this->site_model->get_all_neighbourhood();
-
-					function buildTree( $ar, $pid = 0 ) {
-					    $op = array();
-					    foreach( $ar as $item ) {
-					        if( $item['neighbourhood_parent'] == $pid ) {
-					            $op[$item['neighbourhood_id']] = array(
-					                'neighbourhood_name' => $item['neighbourhood_name'],
-					                'neighbourhood_parent' => $item['neighbourhood_parent'],
-					                'neighbourhood_id' => $item['neighbourhood_id']
-					            );
-					            // using recursion
-					            $children =  buildTree( $ar, $item['neighbourhood_id'] );
-					            if( $children ) {
-					                $op[$item['neighbourhood_id']]['children'] = $children;
-					            }
-					        }
-					    }
-					    return $op;
-					}
-
-					$tree = buildTree($data['neighbourhood']);
-
-					// echo "<pre>";
-
-					// FIND THE ELEMENTS
-					echo "<ul>";
-					foreach ($tree as $parent)
+					//parents
+					if($neighbourhoods_query['neighbourhood_parents']->num_rows() > 0)
 					{
-					    echo '<li><input type="checkbox" name="neighbourhood_id[]" value="'.$parent['neighbourhood_name'].'" id="neighbourhood_id'.$parent['neighbourhood_id'].'"/>'.$parent['neighbourhood_name'].'</li>';
-					    if(empty($parent['children']))
-					    {
-
-
-					    }
-					    else
-					    {
-					    	echo "<ul >";
-					    	foreach ($parent['children'] as $child)
-						    {
-						        echo '<li><input type="checkbox" name="neighbourhood_id[]" value="'.$child['neighbourhood_id'].'" id="neighbourhood_id'.$child['neighbourhood_id'].'"/>
-'. $child['neighbourhood_name'].'</li>';
-						    }
-						    echo "</ul>";
-					    }
-					    
-					    echo PHP_EOL;
+						$parents_array = array();
+						$selected = '';
+						$parents_array[''] = '--All neighbourhoods--';
+						$js = 'id="filter_neighbourhood" class="form-control"';
+						
+						foreach($neighbourhoods_query['neighbourhood_parents']->result() as $res)
+						{
+							$neighbourhood_id = $res->neighbourhood_id;
+							$neighbourhood_name = $res->neighbourhood_name;
+							$web_name = $this->profile_model->create_web_name($neighbourhood_name);
+							$parents_array[$web_name] = $neighbourhood_name;
+						}
+						
+						//check for selected neighbourhood
+						if(is_array($neighbourhoods_array))
+						{
+							$total_neighbourhoods = count($neighbourhoods_array);
+							
+							for($r = 0; $r < $total_neighbourhoods; $r++)
+							{
+								$selected = $neighbourhoods_array[$r];
+							}
+						}
+						echo form_dropdown('neighbourhood_parent', $parents_array, $selected, $js);
 					}
-					echo "</ul>";
+					
+					/*if($neighbourhoods_query->num_rows() > 0)
+					{
+						foreach($neighbourhoods_query->result() as $res)
+						{
+							$neighbourhood_id = $res->neighbourhood_id;
+							$neighbourhood_name = $res->neighbourhood_name;
+							$web_name = $this->profile_model->create_web_name($neighbourhood_name);
+										
+							if(is_array($neighbourhoods_array))
+							{
+								$total_neighbourhoods = count($neighbourhoods_array);
+								$checked = '';
+								
+								for($r = 0; $r < $total_neighbourhoods; $r++)
+								{
+									if($neighbourhoods_array[$r] == $web_name)
+									{
+										$checked = 'checked = "checked"';
+										break;
+									}
+								}
+								
+								
+								echo 
+								'
+									<div class="block-element">
+										<input type="checkbox" name="neighbourhood_id[]" value="'.$web_name.'" id="neighbourhood_id'.$neighbourhood_id.'" '.$checked.'/>
+										<label for="neighbourhood_id'.$neighbourhood_id.'"><span></span> '.$neighbourhood_name.'</label>
+									</div>
+		
+								';
+							}
+							
+							else
+							{
+								
+								echo 
+								'
+									<div class="block-element">
+										<input type="checkbox" name="neighbourhood_id[]" value="'.$web_name.'" id="neighbourhood_id'.$neighbourhood_id.'"/>
+										<label for="neighbourhood_id'.$neighbourhood_id.'"><span></span> '.$neighbourhood_name.'</label>
+									</div>
+		
+								';
+							}
+						}
+					}*/
 				?>
+                </div>
+                <div class="col-md-12"><div id="children_section"></div></div></div>
 				</nav>
                 <button type="submit" class="btn btn-default">Filter neighbourhood</button>
               </form>

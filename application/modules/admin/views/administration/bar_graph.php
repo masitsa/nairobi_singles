@@ -5,7 +5,7 @@
               <div class="widget boxed">
                 <!-- Widget head -->
                 <div class="widget-head">
-                  <h4 class="pull-left"><i class="icon-reorder"></i>Total Products</h4>
+                  <h4 class="pull-left"><i class="icon-reorder"></i>Total Purchases</h4>
                   <div class="widget-icons pull-right">
                     <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a> 
                     <a href="#" class="wclose"><i class="icon-remove"></i></a>

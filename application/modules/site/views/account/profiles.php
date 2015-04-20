@@ -1,6 +1,6 @@
 <div class="container main-container headerOffset"> 
   
-  <?php echo $this->load->view('products/breadcrumbs');?>
+  <?php //echo $this->load->view('products/breadcrumbs');?>
   
   <div class="row">
   
@@ -8,12 +8,6 @@
     
     <!--right column-->
     <div class="col-lg-9 col-md-9 col-sm-12">
-    
-      <div class="w100 clearfix category-top">
-        <h2> Profiles </h2>
-      </div><!--/.category-top-->
-      
-      
       
       <div class="w100 productFilter clearfix">
         <div class="pull-right ">
@@ -30,7 +24,7 @@
         </div>
         
         <div id="showing">
-        	<?php echo $this->load->view('account/showing');?>
+        	<?php //echo $this->load->view('account/showing');?>
         </div>
         
       </div> <!--/.productFilter-->
@@ -61,7 +55,7 @@ $(document).on("change","select#sort_profiles",function()
 		dataType: 'json',
 		success:function(data)
 		{
-			$("#showing").html(data.showing);
+			/*$("#showing").html(data.showing);*/
 			$("#profiles").html(data.profiles);
 		},
 		error: function(xhr, status, error) {

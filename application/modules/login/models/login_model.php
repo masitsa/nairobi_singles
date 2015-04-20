@@ -140,7 +140,8 @@ class Login_model extends CI_Model
                    'client_login_status'    => TRUE,
                    'client_username'     	=> $result[0]->client_username,
                    'client_email'     		=> $result[0]->client_email,
-                   'client_id'  			=> $result[0]->client_id
+                   'client_id'  			=> $result[0]->client_id,
+                   'client_code'  			=> md5($result[0]->client_id)
                );
 
 			$this->session->set_userdata($newdata);
@@ -166,19 +167,6 @@ class Login_model extends CI_Model
 		$data['last_login'] = date('Y-m-d H:i:s');
 		$this->db->where('client_id', $client_id);
 		$this->db->update('client', $data); 
-	}
-	
-	public function get_balance()
-	{
-		//select the user by email from the database
-		$this->db->select('SUM(price*quantity) AS total_orders');
-		$this->db->where('order_status = 2 AND orders.order_id = order_item.order_id');
-		$this->db->from('orders, order_item');
-		$query = $this->db->get();
-		
-		$result = $query->row();
-		
-		return $result->total_orders;
 	}
 	
 	/*
@@ -220,7 +208,7 @@ class Login_model extends CI_Model
 			$name = $user_name;
 			
 			$subject = 'You requested a password reset';
-			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password.</p>';
+			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password. You can change your password to something more memorable in your profile section once you log in.</p>';
 			
 			$button = '<p><a class="mcnButton " title="Sign in" href="'.site_url().'sign-in" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Sign in</a></p>';
 			$shopping = '<p>If you have any queries or concerns do not hesitate to get in touch with us at <a href="mailto:info@nairobisingles.com">info@nairobisingles.com</a> </p>';
@@ -235,5 +223,29 @@ class Login_model extends CI_Model
 		{
 			return FALSE;
 		}
+	}
+	
+	public function get_new_orders()
+	{
+		$this->db->select('COUNT(client_id) AS total_clients');
+		$this->db->where('client_status = 1');
+		$query = $this->db->get('client');
+		
+		$result = $query->row();
+		
+		return $result->total_clients;
+	}
+	
+	public function get_balance()
+	{
+		//select the user by email from the database
+		$this->db->select('SUM(purchase_amount) AS total_payments');
+		$this->db->where('client_credit_status = 1');
+		$this->db->from('client_credit');
+		$query = $this->db->get();
+		
+		$result = $query->row();
+		
+		return $result->total_payments;
 	}
 }
