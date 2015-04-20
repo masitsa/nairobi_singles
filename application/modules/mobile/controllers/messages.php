@@ -124,7 +124,7 @@ class Messages extends account
 		echo $_GET['callback'].'(' . json_encode($data) . ')';
 	}
 	
-	public function view_message($receiver_web_name = 'annitak')
+	public function view_message($receiver_web_name)
 	{
 	
 		//for smileys
