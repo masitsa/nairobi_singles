@@ -43,8 +43,26 @@ class Account extends MX_Controller
 		//user has not logged in
 		else
 		{
-			$this->session->set_userdata('error_message', 'Please sign up/in to continue');
-			redirect('sign-in');
+			$this->load->model('admin/file_model');
+			$this->load->model('admin/users_model');
+			$this->load->model('profile_model');
+			$this->load->model('site_model');
+			$this->load->model('payments_model');
+			$this->load->model('messages_model');
+			
+			$this->load->library('image_lib');
+			
+			//path to image directory
+			$this->messages_path = realpath(APPPATH . '../assets/messages');
+			$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
+			$this->profile_image_location = base_url().'assets/images/profile/';
+			$this->smiley_location = base_url().'assets/images/smileys/';
+			$this->client_id = 1;
+			 $this->account_balance = $this->payments_model->get_account_balance($this->client_id);
+			$this->image_size = 600;
+			$this->thumb_size = 80;
+			// $this->session->set_userdata('error_message', 'Please sign up/in to continue');
+			// redirect('sign-in');
 		}
 	}
     
@@ -456,6 +474,170 @@ class Account extends MX_Controller
 			
 			echo json_encode($data);
 		}
+	}
+
+	public function get_all_profiles($search = '__', $neighbourhood_id = '__', $gender_id = '__', $age_group_id = '__', $encounter_id = '__', $order_by = 'created', $ajax = '__') 
+	{
+		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
+		$v_data['genders_query'] = $this->profile_model->get_gender();
+		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
+		$v_data['encounters_query'] = $this->profile_model->get_encounter();
+		
+		$v_data['post_neighbourhoods'] = $neighbourhood_id;
+		$v_data['post_genders'] = $gender_id;
+		$v_data['post_ages'] = $age_group_id;
+		$v_data['post_encounters'] = $encounter_id;
+		
+		$v_data['ages_array'] = '';
+		$v_data['encounters_array'] = '';
+		$v_data['neighbourhoods_array'] = '';
+		$config['per_page'] = 21;
+		
+		//get user's prefered matches
+		$client_query = $this->profile_model->get_client($this->client_id);
+		$row = $client_query->row();
+		$client_looking_gender_id = $row->client_looking_gender_id;
+		$client_age_group_id = $row->age_group_id;
+		$client_encounter_id = $row->encounter_id;
+		$client_neighbourhood_id = $row->neighbourhood_id;
+		
+		//case of matches
+		//$where = 'client.gender_id = '.$client_looking_gender_id.' AND client.encounter_id = '.$client_encounter_id.' AND client.neighbourhood_id = '.$client_neighbourhood_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
+		
+		//browse all profiles
+		$where = 'client.neighbourhood_id = neighbourhood.neighbourhood_id AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.gender_id = '.$client_looking_gender_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
+		$table = 'client, gender, encounter, neighbourhood';
+		$limit = NULL;
+		
+		//ordering products
+		switch ($order_by)
+		{
+			case 'created':
+				$order_method = 'DESC';
+			break;
+			
+			case 'client_username':
+				$order_method = 'ASC';
+			break;
+			
+			default:
+				$order_method = 'DESC';
+			break;
+		}
+		
+		//case of filter_age_groups
+		if($age_group_id != '__')
+		{
+			$return = $this->profile_model->create_age_filter($age_group_id, 'client.client_dob');
+			$where .= $return['where'];
+			$v_data['ages_array'] = $return['parameters'];
+			$config['per_page'] = 100;
+		}
+		
+		//case of filter_encounters
+		if($encounter_id != '__')
+		{
+			$return = $this->profile_model->create_query_filter($encounter_id, 'encounter.encounter_name');
+			$where .= $return['where'];
+			$v_data['encounters_array'] = $return['parameters'];
+			$config['per_page'] = 100;
+		}
+		
+		//case of filter_gender
+		if($gender_id != '__')
+		{
+			//$where .= $this->profile_model->create_query_filter($gender_id, 'client.gender_id');
+		}
+		
+		//case of filter_neighbourhood
+		if($neighbourhood_id != '__')
+		{
+			$return = $this->profile_model->create_neighbourhood_filter($neighbourhood_id, 'neighbourhood.neighbourhood_name');
+			$where .= $return['where'];
+			$v_data['neighbourhoods_array'] = $return['parameters'];
+			$config['per_page'] = 100;
+		}
+		
+		//case of search
+		if($search != '__')
+		{
+			$where .= " client.encounter_id = encounter.encounter_id AND (client.client_username LIKE '%".$search."%' OR encounter.encounter_name LIKE '%".$search."%')";
+			$table .= ', encounter';
+			$config['per_page'] = 100;
+		}
+		
+		//pagination
+		$segment = 2;
+		$this->load->library('pagination');
+		$config['base_url'] = site_url().'browse';;
+		$config['total_rows'] = $this->users_model->count_items($table, $where, $limit);
+		$config['uri_segment'] = $segment;
+		$config['num_links'] = 5;
+		
+		$config['full_tag_open'] = '<ul class="pagination no-margin-top">';
+		$config['full_tag_close'] = '</ul>';
+		
+		$config['first_tag_open'] = '<li>';
+		$config['first_tag_close'] = '</li>';
+		
+		$config['last_tag_open'] = '<li>';
+		$config['last_tag_close'] = '</li>';
+		
+		$config['next_tag_open'] = '<li>';
+		$config['next_link'] = '»';
+		$config['next_tag_close'] = '</span>';
+		
+		$config['prev_tag_open'] = '<li>';
+		$config['prev_link'] = '«';
+		$config['prev_tag_close'] = '</li>';
+		
+		$config['cur_tag_open'] = '<li class="active"><a href="#">';
+		$config['cur_tag_close'] = '</a></li>';
+		
+		$config['num_tag_open'] = '<li>';
+		$config['num_tag_close'] = '</li>';
+		$this->pagination->initialize($config);
+		
+		$page = ($this->uri->segment($segment)) ? $this->uri->segment($segment) : 0;
+		
+		if($limit == NULL)
+		{
+        	$v_data["links"] = $this->pagination->create_links();
+			$v_data["first"] = $page + 1;
+			$v_data["total"] = $config['total_rows'];
+			
+			if($v_data["total"] < $config["per_page"])
+			{
+				$v_data["last"] = $page + $v_data["total"];
+			}
+			
+			else
+			{
+				$v_data["last"] = $page + $config["per_page"];
+			}
+		}
+		
+		else
+		{
+			$v_data["first"] = $page + 1;
+			$v_data["total"] = $config['total_rows'];
+			$v_data["last"] = $config['total_rows'];
+		}
+		$v_data['profiles'] = $this->profile_model->get_all_clients($table, $where, $config["per_page"], $page, $limit, $order_by, $order_method);
+		$v_data['profile_image_path'] = $this->profile_image_path;
+		$v_data['profile_image_location'] = $this->profile_image_location;
+		$v_data['current_client_id'] = $this->client_id;
+		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
+		$v_data['genders_query'] = $this->profile_model->get_gender();
+		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
+		$v_data['encounters_query'] = $this->profile_model->get_encounter();
+		$v_data['crumbs'] = $this->site_model->get_crumbs();
+		$v_data['account_balance'] = $this->account_balance;
+		
+		
+			$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		 echo json_encode($data);
+		 // var_dump($data) or die();
 	}
     
 	/*
