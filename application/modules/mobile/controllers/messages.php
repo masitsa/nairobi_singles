@@ -118,9 +118,11 @@ class Messages extends account
 		$v_data['current_client_id'] = $this->client_id;
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
 		
-		$data['content'] = $this->load->view('messages/inbox', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		
+
+		$data['result']= $this->load->view('messages/inbox', $v_data, true);
+		$data['username']= $this->session->userdata('client_username');
+		echo $_GET['callback'].'(' . json_encode($data) . ')';
 	}
 	
 	public function view_message($receiver_web_name = 'annitak')
@@ -154,7 +156,7 @@ class Messages extends account
 		$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
 		$v_data['profile_image_location'] = $this->profile_image_location;
 		$v_data['account_balance'] = $this->account_balance;
-		
+
 		$data['result']= $this->load->view('messages/view_message', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
 		echo $_GET['callback'].'(' . json_encode($data) . ')';
