@@ -123,8 +123,9 @@ class Messages extends account
 		$this->load->view('templates/general_page', $data);
 	}
 	
-	public function view_message($receiver_web_name)
+	public function view_message($receiver_web_name = 'annitak')
 	{
+	
 		//for smileys
 		$image_array = get_clickable_smileys($this->smiley_location, 'instant_message2');
 		$col_array = $this->table->make_columns($image_array, 12);
@@ -154,9 +155,9 @@ class Messages extends account
 		$v_data['profile_image_location'] = $this->profile_image_location;
 		$v_data['account_balance'] = $this->account_balance;
 		
-		$data['content'] = $this->load->view('messages/view_message', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		$data['result']= $this->load->view('messages/view_message', $v_data, true);
+		$data['username']= $this->session->userdata('client_username');
+		echo $_GET['callback'].'(' . json_encode($data) . ')';
 	}
 	
 	public function count_unread_messages()
