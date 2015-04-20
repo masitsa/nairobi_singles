@@ -635,8 +635,9 @@ class Account extends MX_Controller
 		$v_data['account_balance'] = $this->account_balance;
 		
 		
-			$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
-		 echo json_encode($data);
+			 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+			  echo $_GET['callback'].'(' . json_encode($data) . ')';
+		  
 		 // var_dump($data) or die();
 	}
     
