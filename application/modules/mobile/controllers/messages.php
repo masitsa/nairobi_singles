@@ -4,10 +4,14 @@ require_once "./application/modules/site/controllers/account.php";
 
 class Messages extends account 
 {
-	
+	var $message_amount;
+	var $like_amount;
+		
 	function __construct()
 	{
 		parent:: __construct();
+		$this->message_amount = $this->config->item('message_cost');
+		$this->like_amount = $this->config->item('like_cost');
 	}
 	
 	public function inbox($search = '__', $order_by = 'created') 
@@ -121,12 +125,11 @@ class Messages extends account
 
 		$data['result']= $this->load->view('messages/inbox', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
-		echo $_GET['callback'].'(' . json_encode($data) . ')';
+		echo json_encode($data);
 	}
 	
 	public function view_message($receiver_web_name)
 	{
-	
 		//for smileys
 		$image_array = get_clickable_smileys($this->smiley_location, 'instant_message2');
 		$col_array = $this->table->make_columns($image_array, 12);
@@ -152,18 +155,37 @@ class Messages extends account
 		$v_data['receiver'] = $this->profile_model->get_client($receiver_id);
 		$v_data['sender'] = $this->profile_model->get_client($this->client_id);
 		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
-		$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
+		//$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
 		$v_data['profile_image_location'] = $this->profile_image_location;
+		$v_data['profile_image_path'] = $this->profile_image_path;
 		$v_data['account_balance'] = $this->account_balance;
 
 		$data['result']= $this->load->view('messages/view_message', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
-		echo $_GET['callback'].'(' . json_encode($data) . ')';
+		$data['receiver_id']= $receiver_id;
+		$data['received_messages']= $this->profile_model->count_received_messages($v_data['messages']);
+		echo json_encode($data);
 	}
 	
 	public function count_unread_messages()
 	{
 		$data['unread_messages'] = $this->messages_model->count_unread_messages($this->client_id, $this->messages_path);
+		
+		echo json_encode($data);
+	}
+	
+	public function new_single_message_check($receiver_id)
+	{
+		$v_data['smiley_location'] = $this->smiley_location;
+		$v_data['receiver'] = $this->profile_model->get_client($receiver_id);
+		$v_data['sender'] = $this->profile_model->get_client($this->client_id);
+		$v_data['messages'] = $this->profile_model->get_messages($this->client_id, $receiver_id, $this->messages_path);
+		$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
+		$v_data['profile_image_location'] = $this->profile_image_location;
+		$v_data['profile_image_path'] = $this->profile_image_path;
+		
+		$data['message'] = $this->load->view('messages/new_message', $v_data, true);
+		$data['curr_message_count'] = $v_data['received_messages'];
 		
 		echo json_encode($data);
 	}
@@ -215,19 +237,21 @@ class Messages extends account
 	
 	public function message_profile($page = NULL)
 	{
-		$this->form_validation->set_error_delimiters('', '');
-		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');
+		/*$this->form_validation->set_error_delimiters('', '');
+		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');*/
+		$message = $_GET['client_message_details'];
+		$receiver_id = $_GET['receiver_id'];
 		
-		if($this->form_validation->run())
+		if(!empty($message))
 		{
-			$data['client_message_details'] = $this->input->post('client_message_details');
+			$data['client_message_details'] = mysql_real_escape_string($message);
 			$data['client_id'] = $this->client_id;
-			$data['receiver_id'] = $this->input->post('receiver_id');
+			$data['receiver_id'] = $receiver_id;
 			$data['created'] = date('Y-m-d H:i:s');
 			$content = json_encode($data);
 			
 			//create file name
-			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'));
+			$file_name = $this->profile_model->create_file_name($this->client_id, $receiver_id);
 			$file_path = $this->messages_path.'//'.$file_name;
 			$base_path = $this->messages_path;
 			
@@ -247,12 +271,12 @@ class Messages extends account
 					else
 					{
 					}
-					$this->send_message($data['receiver_id'], $page);
+					$return = $this->view_sent_message($data['client_message_details'], $this->client_id, $data['created']);
 				}
 				
 				else
 				{
-					echo 'false';
+					$return = 'false1';
 				}
 			}
 			
@@ -268,15 +292,42 @@ class Messages extends account
 				else
 				{
 				}
-				$this->send_message($data['receiver_id'], $page);
+				$return = $this->view_sent_message($data['client_message_details'], $this->client_id, $data['created']);
 			}
-			
-			//$this->db->insert('client_message', $data);
 		}
 		
 		else
 		{
-			echo 'false';
+			$return = 'false';
 		}
+		
+		echo $_GET['callback'].'(' . json_encode($return) . ')';
+	}
+	
+	public function view_sent_message($message, $client_id, $created)
+	{
+		$sender = $this->profile_model->get_client($client_id);
+		if($sender->num_rows() > 0)
+		{
+			$row = $sender->row();
+			$client_username = $row->client_username;
+			$client_thumb = $row->client_thumb;
+			$client_thumb = $this->profile_model->image_display($this->profile_image_path, $this->profile_image_location, $client_thumb);
+		}
+		$data['message'] = '
+				<li class="row">
+					<div class="col-xs-9">
+						<div class="bubble">
+							<div>'.$message.'</div>
+							<div class="message-date">'.date('jS M Y H:i a',strtotime($created)).'</div>
+						</div>
+					</div>
+					
+					<div class="col-xs-3">
+						<img src="'.$client_thumb.'" class="img-responsive">
+					</div>
+				</li>';
+				
+		return $data;
 	}
 }

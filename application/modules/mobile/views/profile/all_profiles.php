@@ -63,19 +63,10 @@
 			if($account_balance > 0)
 			{
 				$actions = '
-					<div class="hide-mobile">
-						<span id="like_section'.$client_id.'">'.$like.'</span>
-						<a class="btn btn-success message" client_id="'.$client_id.' "data-toggle="modal"  data-dismiss="modal" href="#send-message"> 
-							<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
-						</a>
-					</div>
-					
-					<div class="show-mobile">
-						<span id="like_section'.$client_id.'">'.$like2.'</span>
-						<a class="btn btn-success" href="'.site_url().'messages/inbox/'.$web_name.'"> 
-							<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
-						</a>
-					</div>
+					<span id="like_section'.$client_id.'">'.$like2.'</span>
+					<a class="btn btn-success" href="single_message.html?web_name='.$web_name.'"> 
+						<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
+					</a>
 						';
 			}
 			
@@ -110,7 +101,7 @@
                             <div class="profile-details">'.$age.' year old. '.$gender_name.' . '.$neighbourhood_name.'</div>
                             
                             <a href="#" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-heart"></i></a>
-                            <a href="#" class="btn btn-lg btn-success"><i class="glyphicon glyphicon-envelope"></i></a>
+                            <a href="single_message.html?web_name='.$web_name.'" class="btn btn-lg btn-success"><i class="glyphicon glyphicon-envelope"></i></a>
                         </div>
                     </li>
 			';

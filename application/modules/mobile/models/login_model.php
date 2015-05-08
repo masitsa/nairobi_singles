@@ -48,10 +48,10 @@ class Login_model extends CI_Model
 	public function register_client_details()
 	{
 		$newdata = array(
-			   'client_username'			=> $this->input->post('client_username'),
-			   'client_email'				=> strtolower($this->input->post('client_email')),
+			   'client_username'			=> $this->input->post('username'),
+			   'client_email'				=> strtolower($this->input->post('email')),
 			   'created'     				=> date('Y-m-d H:i:s'),
-			   'client_password'			=> md5($this->input->post('client_password')),
+			   'client_password'			=> md5($this->input->post('password')),
 			   'gender_id'					=> $this->input->post('gender_id'),
 			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id')
 		   );

@@ -4,14 +4,27 @@ require_once "./application/modules/site/controllers/account.php";
 
 class Profile extends account 
 {
-	var $message_amount;
-	var $like_amount;
-	
 	function __construct()
 	{
 		parent:: __construct();
-		$this->message_amount = $this->config->item('message_cost');
-		$this->like_amount = $this->config->item('like_cost');
+		// Allow from any origin
+		if (isset($_SERVER['HTTP_ORIGIN'])) {
+			header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+			header('Access-Control-Allow-Credentials: true');
+			header('Access-Control-Max-Age: 86400');    // cache for 1 day
+		}
+	
+		// Access-Control headers are received during OPTIONS requests
+		if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+	
+			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+				header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
+	
+			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+				header("Access-Control-Allow-Headers:        {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+	
+			exit(0);
+		}
 	}
 	
 	public function update_profile_image()
@@ -381,35 +394,8 @@ class Profile extends account
 			echo 'false';
 		}
 	}
-	
-	public function edit_profile()
+	public function get_client_details()
 	{
-		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
-		$v_data['genders_query'] = $this->profile_model->get_gender();
-		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
-		$v_data['encounters_query'] = $this->profile_model->get_encounter();
-		
-		$v_data['post_neighbourhoods'] = '';
-		$v_data['post_genders'] = '';
-		$v_data['post_ages'] = '';
-		$v_data['post_encounters'] = '';
-		
-		$v_data['ages_array'] = '';
-		$v_data['encounters_array'] = '';
-		$v_data['neighbourhoods_array'] = '';
-		
-		//initialize required variables
-		$v_data['parent_error'] = '';
-		$v_data['child_error'] = '';
-		$v_data['client_about_error'] = '';
-		$v_data['client_dob1_error'] = '';
-		$v_data['client_dob2_error'] = '';
-		$v_data['client_dob3_error'] = '';
-		$v_data['client_looking_gender_id_error'] = '';
-		$v_data['age_group_id_error'] = '';
-		$v_data['encounter_id_error'] = '';
-		$v_data['gender_id_error'] = '';
-				
 		$client_query = $this->profile_model->get_client($this->client_id);
 		$row = $client_query->row();
 		$v_data['profile_image_location'] = $this->profile_image_location.$row->client_image;
@@ -424,6 +410,17 @@ class Profile extends account
 		$v_data['client_dob1'] = date('d',strtotime($client_dob));
 		$v_data['client_dob2'] = date('m',strtotime($client_dob));
 		$v_data['client_dob3'] = date('Y',strtotime($client_dob));
+		
+		echo json_encode($v_data);
+	}
+	
+	public function edit_profile()
+	{
+		/*$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
+		$v_data['genders_query'] = $this->profile_model->get_gender();
+		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
+		$v_data['encounters_query'] = $this->profile_model->get_encounter();*/
+		
 		
 		//check if neighbourhood is parent
 		$parent = $this->profile_model->is_parent($neighbourhood_id);
@@ -473,12 +470,12 @@ class Profile extends account
 			if($this->profile_model->register_profile_details($this->client_id, $this->session->userdata('profile_file_name'), $this->session->userdata('profile_thumb_name')))
 			{
 				//redirect only if logo error isnt present
-				redirect('my-profile');
+				// echo success
 			}
 			
 			else
 			{
-				$this->session->set_userdata('vendor_signup2_error_message', 'Unable to add user details. Please try again');
+				
 			}
 		}
 		$validation_errors = validation_errors();
@@ -486,29 +483,7 @@ class Profile extends account
 		//repopulate form data if validation errors are present
 		if(!empty($validation_errors))
 		{
-			//create errors
-			$v_data['parent_error'] = form_error('parent');
-			$v_data['child_error'] = form_error('child');
-			$v_data['client_about_error'] = form_error('client_about');
-			$v_data['client_dob1_error'] = form_error('client_dob1');
-			$v_data['client_dob2_error'] = form_error('client_dob2');
-			$v_data['client_dob3_error'] = form_error('client_dob3');
-			$v_data['client_looking_gender_id_error'] = form_error('client_looking_gender_id');
-			$v_data['gender_id'] = form_error('gender_id');
-			$v_data['age_group_id_error'] = form_error('age_group_id');
-			$v_data['encounter_id_error'] = form_error('encounter_id');
 			
-			//repopulate fields
-			$v_data['parent'] = set_value('parent');
-			$v_data['child'] = set_value('child');
-			$v_data['client_about'] = set_value('client_about');
-			$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
-			$v_data['gender_id'] = set_value('gender_id');
-			$v_data['age_group_id'] = set_value('age_group_id');
-			$v_data['encounter_id'] = set_value('encounter_id');
-			$v_data['client_dob1'] = set_value('client_dob1');
-			$v_data['client_dob2'] = set_value('client_dob2');
-			$v_data['client_dob3'] = set_value('client_dob3');
 		}
 		
 		//populate form data on initial load of page
@@ -516,30 +491,14 @@ class Profile extends account
 		{
 			if(!empty($v_data['profile_image_error']))
 			{
-				/*$v_data['neighbourhood_id'] = set_value('neighbourhood_id');
-				$v_data['client_about'] = set_value('client_about');
-				$v_data['client_looking_gender_id'] = set_value('client_looking_gender_id');
-				$v_data['age_group_id'] = set_value('age_group_id');
-				$v_data['encounter_id'] = set_value('encounter_id');
-				$v_data['client_dob1'] = set_value('client_dob1');
-
-				$v_data['client_dob2'] = set_value('client_dob2');
-				$v_data['client_dob3'] = set_value('client_dob3');*/
+				
 			}
 			
 			else
 			{
 			}
 		}
-		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
-		$v_data['genders_query'] = $this->profile_model->get_gender();
-		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
-		$v_data['encounters_query'] = $this->profile_model->get_encounter();
 		
-		$data['content'] = $this->load->view('register/edit_profile', $v_data, true);
-		
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
 	}
     
 	/*

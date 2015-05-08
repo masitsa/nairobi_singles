@@ -10,43 +10,66 @@ class Account extends MX_Controller
 	var $messages_path;
 	var $smiley_location;
 	var $account_balance;
+	var $message_amount;
+	var $like_amount;
 	
 	function __construct()
 	{
 		parent:: __construct();
-		
+		// Allow from any origin
+		if (isset($_SERVER['HTTP_ORIGIN'])) {
+			header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+			header('Access-Control-Allow-Credentials: true');
+			header('Access-Control-Max-Age: 86400');    // cache for 1 day
+		}
+	
+		// Access-Control headers are received during OPTIONS requests
+		if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+	
+			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+				header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
+	
+			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+				header("Access-Control-Allow-Headers:        {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+	
+			exit(0);
+		}
+    	
 		$this->load->model('login/login_model');
 		
 		//user has logged in
-		if($this->login_model->check_client_login())
+		/*if($this->login_model->check_client_login())
 		{
-			$this->load->model('admin/file_model');
-			$this->load->model('admin/users_model');
-			$this->load->model('profile_model');
-			$this->load->model('site_model');
-			$this->load->model('payments_model');
-			$this->load->model('messages_model');
-			
-			$this->load->library('image_lib');
-			
-			//path to image directory
-			$this->messages_path = realpath(APPPATH . '../assets/messages');
-			$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
-			$this->profile_image_location = base_url().'assets/images/profile/';
-			$this->smiley_location = base_url().'assets/images/smileys/';
-			$this->client_id = $this->session->userdata('client_id');
-			$this->account_balance = $this->payments_model->get_account_balance($this->client_id);
-			$this->image_size = 600;
-			$this->thumb_size = 80;
+		
 		}
 		
 		//user has not logged in
 		else
 		{
-			
 			$this->session->set_userdata('error_message', 'Please sign up/in to continue');
 			redirect('sign-in');
-		}
+		}*/
+		
+		$this->load->model('admin/file_model');
+		$this->load->model('admin/users_model');
+		$this->load->model('profile_model');
+		$this->load->model('site_model');
+		$this->load->model('payments_model');
+		$this->load->model('messages_model');
+		
+		$this->load->library('image_lib');
+		
+		//path to image directory
+		$this->messages_path = realpath(APPPATH . '../assets/messages');
+		$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
+		$this->profile_image_location = base_url().'assets/images/profile/';
+		$this->smiley_location = base_url().'assets/images/smileys/';
+		$this->client_id = $this->session->userdata('client_id');
+		$this->account_balance = $this->payments_model->get_account_balance($this->client_id);
+		$this->image_size = 600;
+		$this->thumb_size = 80;
+		$this->message_amount = $this->config->item('message_cost');
+		$this->like_amount = $this->config->item('like_cost');
 	}
     
 	/*
@@ -619,7 +642,7 @@ class Account extends MX_Controller
 		
 		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
-		echo $_GET['callback'].'(' . json_encode($data) . ')';
+		echo json_encode($data);
 	}
     
 	/*
@@ -848,7 +871,7 @@ class Account extends MX_Controller
 
 		 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
 		 $data['username']= $this->session->userdata('client_username');
-		  echo $_GET['callback'].'(' . json_encode($data) . ')';
+		  echo json_encode($data);
 		  // var_dump($data) or die();
 	}
     
@@ -938,7 +961,7 @@ class Account extends MX_Controller
 		
 		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
-		echo $_GET['callback'].'(' . json_encode($data) . ')';
+		echo json_encode($data);
 	}
 	
 	public function error()

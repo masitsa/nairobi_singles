@@ -26,8 +26,9 @@
 if(is_array($messages))
 {
 	$total_messages = count($messages);
+	$last_message = $total_messages - 1;
 	
-	for($r = 0; $r < $total_messages; $r++)
+	for($r = $last_message; $r < $total_messages; $r++)
 	{
 		$message_data = $messages[$r];
 		$sender = $message_data->client_id;
@@ -57,24 +58,20 @@ if(is_array($messages))
 		}
 		
 		//align right
-		else
+		/*else
 		{
 			echo 
 			'
-				<li class="row">
-					<div class="col-xs-9">
-						<div class="bubble">
-							<div>'.$client_message_details.'</div>
-							<div class="message-date">'.date('jS M Y H:i a',strtotime($created)).'</div>
-						</div>
-					</div>
-					
-					<div class="col-xs-3">
-						<img src="'.$client_thumb.'" class="img-responsive">
-					</div>
-				</li>
+				<li>
+                    <div class="bubble">
+                    	'.$client_message_details.'
+                        <div class="message-date pull-left">'.date('jS M Y H:i a',strtotime($created)).'</div>
+                    </div>
+                    
+                	<img src="'.$client_thumb.'" class="img-responsive pull-right">
+                </li>
 			';
-		}
+		}*/
 	}
 }
 ?>

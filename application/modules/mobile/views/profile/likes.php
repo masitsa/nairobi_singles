@@ -72,7 +72,7 @@
 					
 					<div class="show-mobile">
 						<span id="like_section'.$client_id.'">'.$like2.'</span>
-						<a class="btn btn-success" href="'.site_url().'messages/inbox/'.$web_name.'"> 
+						<a class="btn btn-success" href="single_message.html?web_name='.$web_name.'"> 
 							<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
 						</a>
 					</div>

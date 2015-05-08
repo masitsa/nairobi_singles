@@ -72,7 +72,7 @@
             
             echo
             '
-	            <a href="messages.html?web_name='.$web_name.'" class="list-group-item">
+	            <a href="single_message.html?web_name='.$web_name.'" class="list-group-item">
 	                <div class="row">
 						<div class="message-image col-xs-4">
 							<img src="'.$image.'" alt="img" class="img-responsive">
