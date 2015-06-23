@@ -4,4 +4,7 @@
 <file name="account.php" server="192.186.246.118/public_html/development/" local="130697654565391340" remote="130707622200000000" Dst="0" />
 <file name="general_page.php" server="192.186.246.118/public_html/development/" local="130701223372526213" remote="130707622200000000" Dst="0" />
 <file name="home_page.php" server="192.186.246.118/public_html/development/" local="130701144077832166" remote="130707622200000000" Dst="0" />
+<file name="account.php" server="192.186.246.118/public_html/" local="130697654565391340" remote="130772309400000000" Dst="0" />
+<file name="general_page.php" server="192.186.246.118/public_html/" local="130701223372526213" remote="130772309400000000" Dst="0" />
+<file name="home_page.php" server="192.186.246.118/public_html/" local="130701144077832166" remote="130772309400000000" Dst="0" />
 </dwsync>

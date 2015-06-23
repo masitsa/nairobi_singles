@@ -65,7 +65,7 @@ class Messages_model extends CI_Model
 				if(is_array($message_array))
 				{
 					$total_messages = count($message_array);
-					$last_message = $total_messages - 1;
+					/*$last_message = $total_messages - 1;
 					
 					$message_data = $message_array[$last_message];
 					$receiver_id = $message_data->receiver_id;
@@ -73,21 +73,24 @@ class Messages_model extends CI_Model
 					if($receiver_id == $client_id)
 					{
 						$total_received++;
+					}*/
+					
+					for($r = 0; $r < $total_messages; $r++)
+					{
+						$total_received++;
 					}
 				}
 			}
 		}
 		
-		if($total_received > 0)
-		{
-			$total_received = '<span class="badge red-badge">'.$total_received.'</span>';
-		}
-		
-		else
-		{
-			$total_received = '';
-		}
-		
 		return $total_received;
+	}
+	
+	public function get_unread_messages($client_id)
+	{
+		$this->db->where('read_status = 0 AND last_receiver_id = '.$client_id);
+		$query = $this->db->get('client_message');
+		
+		return $query;
 	}
 }

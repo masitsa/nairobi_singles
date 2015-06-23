@@ -11,24 +11,14 @@ class Subscription extends account
 	
 	public function subscribe()
 	{
-		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
-		$v_data['genders_query'] = $this->profile_model->get_gender();
-		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
-		$v_data['encounters_query'] = $this->profile_model->get_encounter();
+		$account_balance = $this->payments_model->get_account_balance($this->client_id);
+		$return = '<div class="alert alert-info"><p class="center-align">Your account balance is currently '.$account_balance.'chatcredits</p>';
 		
-		$v_data['post_neighbourhoods'] = '';
-		$v_data['post_genders'] = '';
-		$v_data['post_ages'] = '';
-		$v_data['post_encounters'] = '';
-		
-		$v_data['ages_array'] = '';
-		$v_data['encounters_array'] = '';
-		$v_data['neighbourhoods_array'] = '';
-		
-		$v_data['credit_types'] = $this->payments_model->get_credit_types();
-		$v_data['credits'] = $this->payments_model->get_client_credits($this->client_id);
-		$v_data['account_balance'] = $this->payments_model->get_account_balance($this->client_id);
-		
+		echo json_encode($return);
+	}
+	
+	public function purchase_credit()
+	{
 		$v_data['iframe'] = '';
 		
 		//form validation rules
@@ -44,21 +34,9 @@ class Subscription extends account
 			$v_data['iframe'] = $iframe;
 		}
 		
-		else
-		{
-			$validation_errors = validation_errors();
-			
-			if(!empty($validation_errors))
-			{
-				$this->session->set_userdata('error_message', validation_errors());
-			}
-		}
-		
-		$v_data['crumbs'] = $this->site_model->get_crumbs();
-		
 		$data['content'] = $this->load->view('subscription/subscription', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		
+		echo json_encode($data);
 	}
     
 	/*
@@ -87,14 +65,14 @@ class Subscription extends account
 			{
 				$this->session->set_userdata('error_message', 'Unable to complete your payment. Please contact an administrator');
 			}
-			redirect('credits');
+			$this->subscribe();
 		}
 		
 		else
 		{
 			$this->payments_model->update_payment_response($transaction_tracking_id, $client_credit_id);
 			
-			redirect('process-payment/'.$transaction_tracking_id.'/'.$client_credit_id);
+			$this->process_payment($transaction_tracking_id, $client_credit_id);
 		}
 	}
 	
@@ -104,8 +82,8 @@ class Subscription extends account
 		$v_data['client_credit_id'] = $client_credit_id;
 		
 		$data['content'] = $this->load->view('subscription/processing', $v_data, true);
-		$data['title'] = $this->site_model->display_page_title();
-		$this->load->view('templates/general_page', $data);
+		
+		echo json_encode($data);
 	}
 	
 	public function check_payment($count, $transaction_tracking_id, $client_credit_id)

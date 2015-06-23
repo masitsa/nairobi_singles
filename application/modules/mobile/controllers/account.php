@@ -40,14 +40,33 @@ class Account extends MX_Controller
 		//user has logged in
 		/*if($this->login_model->check_client_login())
 		{
-		
+			$this->load->model('admin/file_model');
+			$this->load->model('admin/users_model');
+			$this->load->model('profile_model');
+			$this->load->model('site_model');
+			$this->load->model('payments_model');
+			$this->load->model('messages_model');
+			
+			$this->load->library('image_lib');
+			
+			//path to image directory
+			$this->messages_path = realpath(APPPATH . '../assets/messages');
+			$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
+			$this->profile_image_location = base_url().'assets/images/profile/';
+			$this->smiley_location = base_url().'assets/images/smileys/';
+			$this->client_id = $this->session->userdata('client_id');
+			$this->account_balance = $this->payments_model->get_account_balance($this->client_id);
+			$this->image_size = 600;
+			$this->thumb_size = 80;
+			$this->message_amount = $this->config->item('message_cost');
+			$this->like_amount = $this->config->item('like_cost');
 		}
 		
 		//user has not logged in
 		else
 		{
 			$this->session->set_userdata('error_message', 'Please sign up/in to continue');
-			redirect('sign-in');
+			$this->sign_in();
 		}*/
 		
 		$this->load->model('admin/file_model');
@@ -64,7 +83,7 @@ class Account extends MX_Controller
 		$this->profile_image_path = realpath(APPPATH . '../assets/images/profile');
 		$this->profile_image_location = base_url().'assets/images/profile/';
 		$this->smiley_location = base_url().'assets/images/smileys/';
-		$this->client_id = $this->session->userdata('client_id');
+		$this->client_id = 1429;
 		$this->account_balance = $this->payments_model->get_account_balance($this->client_id);
 		$this->image_size = 600;
 		$this->thumb_size = 80;
@@ -80,6 +99,13 @@ class Account extends MX_Controller
 	public function index() 
 	{
 		redirect('browse');
+	}
+	
+	public function sign_in()
+	{
+		$response['message'] = 'sign in';
+		
+		echo json_encode($response);
 	}
     
 	/*
@@ -482,7 +508,7 @@ class Account extends MX_Controller
 		}
 	}
 
-	public function get_all_profiles($search = '__', $neighbourhood_id = '__', $gender_id = '__', $age_group_id = '__', $encounter_id = '__', $order_by = 'created', $ajax = '__') 
+	public function get_all_profiles($all_profiles, $search = '__', $neighbourhood_id = '__', $gender_id = '__', $age_group_id = '__', $encounter_id = '__', $order_by = 'created', $ajax = '__') 
 	{
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
 		$v_data['genders_query'] = $this->profile_model->get_gender();
@@ -497,7 +523,7 @@ class Account extends MX_Controller
 		$v_data['ages_array'] = '';
 		$v_data['encounters_array'] = '';
 		$v_data['neighbourhoods_array'] = '';
-		$config['per_page'] = 21;
+		$config['per_page'] = 20;
 		
 		//get user's prefered matches
 		$client_query = $this->profile_model->get_client($this->client_id);
@@ -511,9 +537,11 @@ class Account extends MX_Controller
 		//$where = 'client.gender_id = '.$client_looking_gender_id.' AND client.encounter_id = '.$client_encounter_id.' AND client.neighbourhood_id = '.$client_neighbourhood_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
 		
 		//browse all profiles
-		$where = 'client.neighbourhood_id = neighbourhood.neighbourhood_id AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.gender_id = '.$client_looking_gender_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
-		$table = 'client, gender, encounter, neighbourhood';
-		$limit = NULL;
+		//$where = 'client.neighbourhood_id = neighbourhood.neighbourhood_id AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.gender_id = '.$client_looking_gender_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
+		$where = "((client.client_image IS NOT NULL) OR (client.client_image != '0')) AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.gender_id = ".$client_looking_gender_id.' AND client.client_status = 1 AND client.client_id != '.$this->client_id;
+		$table = 'client, gender, encounter';
+		$limit = NULL;//20 + $all_profiles;
+		$page = $all_profiles;
 		
 		//ordering products
 		switch ($order_by)
@@ -604,7 +632,7 @@ class Account extends MX_Controller
 		$config['num_tag_close'] = '</li>';
 		$this->pagination->initialize($config);
 		
-		$page = ($this->uri->segment($segment)) ? $this->uri->segment($segment) : 0;
+		//$page = ($this->uri->segment($segment)) ? $this->uri->segment($segment) : 0;
 		
 		if($limit == NULL)
 		{
@@ -639,8 +667,17 @@ class Account extends MX_Controller
 		$v_data['encounters_query'] = $this->profile_model->get_encounter();
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
 		$v_data['account_balance'] = $this->account_balance;
+		$v_data['client_looking_gender_id'] = $client_looking_gender_id;
 		
 		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		if($v_data['profiles']->num_rows() > 0)
+		{
+			$data['total']= $page+20;
+		}
+		else
+		{
+			$data['total']= 0;
+		}
 		$data['username']= $this->session->userdata('client_username');
 		echo json_encode($data);
 	}
@@ -789,8 +826,8 @@ class Account extends MX_Controller
 	public function likes_me() 
 	{
 		//search who like me
-		$where = 'client.neighbourhood_id = neighbourhood.neighbourhood_id AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.client_id = client_like.client_id AND client.client_status = 1 AND client_like.like_id = '.$this->client_id;
-		$table = 'client, gender, encounter, neighbourhood, client_like';
+		$where = 'client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.client_id = client_like.client_id AND client.client_status = 1 AND client_like.like_id = '.$this->client_id;
+		$table = 'client, gender, encounter, client_like';
 		$limit = NULL;
 		$order_by = 'client_like.last_modified';
 		$order_method = 'DESC';
@@ -870,6 +907,7 @@ class Account extends MX_Controller
 		// $this->load->view('templates/general_page', $data);
 
 		 $data['result']= $this->load->view('profile/all_profiles', $v_data, true);
+		 $data['total']= $v_data['profiles']->num_rows();
 		 $data['username']= $this->session->userdata('client_username');
 		  echo json_encode($data);
 		  // var_dump($data) or die();
@@ -883,8 +921,8 @@ class Account extends MX_Controller
 	public function i_like() 
 	{
 		//search who like me
-		$where = 'client.neighbourhood_id = neighbourhood.neighbourhood_id AND client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.client_id = client_like.like_id AND client.client_status = 1 AND client_like.client_id = '.$this->client_id;
-		$table = 'client, gender, encounter, neighbourhood, client_like';
+		$where = 'client.gender_id = gender.gender_id AND client.encounter_id = encounter.encounter_id AND client.client_id = client_like.like_id AND client.client_status = 1 AND client_like.client_id = '.$this->client_id;
+		$table = 'client, gender, encounter, client_like';
 		$limit = NULL;
 		$order_by = 'client_like.last_modified';
 		$order_method = 'DESC';
@@ -957,8 +995,9 @@ class Account extends MX_Controller
 		$v_data['encounters_query'] = $this->profile_model->get_encounter();
 		$v_data['crumbs'] = $this->site_model->get_crumbs();
 		$v_data['account_balance'] = $this->account_balance;
-		$v_data['like_section'] = 1;
+		$v_data['like_section'] = 2;
 		
+		 $data['total']= $v_data['profiles']->num_rows();
 		$data['result']= $this->load->view('profile/all_profiles', $v_data, true);
 		$data['username']= $this->session->userdata('client_username');
 		echo json_encode($data);

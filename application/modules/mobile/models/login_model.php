@@ -58,7 +58,7 @@ class Login_model extends CI_Model
 
 		if($this->db->insert('client', $newdata))
 		{
-			return TRUE;
+			return $this->db->insert_id();
 		}
 		else
 		{
@@ -119,46 +119,57 @@ class Login_model extends CI_Model
 		return $query;
 	}
 	
-	public function reset_client_password()
+	public function reset_client_password($email)
 	{
-		$email = $this->input->post('client_email');
-		//reset password
-		$result = md5(date("Y-m-d H:i:s"));
-		$pwd2 = substr($result, 0, 6);
-		$pwd = md5($pwd2);
-		
-		$data = array(
-				'client_password' => $pwd
-			);
-		$this->db->where('client_email', $email);
-		
-		if($this->db->update('client', $data))
+		//check if user exists
+		$user_details = $this->get_user_by_email($email);
+		if($user_details->num_rows() > 0)
 		{
-			//email the password to the user
-			$user_details = $this->get_user_by_email($email);
-			
 			$user = $user_details->row();
 			$user_name = $user->client_username;
 			
-			$cc = NULL;
-			$name = $user_name;
+			//reset password
+			$result = md5(date("Y-m-d H:i:s"));
+			$pwd2 = substr($result, 0, 6);
+			$pwd = md5($pwd2);
 			
-			$subject = 'You requested a password reset';
-			$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password. You can change your password to something more memorable in your profile section once you log in.</p>';
+			$data = array(
+					'client_password' => $pwd
+				);
+			$this->db->where('client_email', $email);
 			
-			$button = '<p><a class="mcnButton " title="Sign in" href="'.site_url().'sign-in" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Sign in</a></p>';
-			$shopping = '<p>If you have any queries or concerns do not hesitate to get in touch with us at <a href="mailto:info@nairobisingles.com">info@nairobisingles.com</a> </p>';
-			$sender_email = 'info@nairobisingles.com';
-			$from = 'Nairobisingles';
-			
-			$response = $this->email_model->send_mandrill_mail($email, $name, $subject, $message, $sender_email, $shopping, $from, $button, $cc);
-			
-			return TRUE;
+			if($this->db->update('client', $data))
+			{	
+				$cc = NULL;
+				$name = $user_name;
+				
+				$subject = 'You requested a password reset';
+				$message = '<p>You have password has been successfully reset.</p><p>Next time you log in to Nairobisingles please use <strong>'.$pwd2.'</strong> as your password. You can change your password to something more memorable in your profile section once you log in.</p>';
+				
+				$button = '<p><a class="mcnButton " title="Sign in" href="'.site_url().'sign-in" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Sign in</a></p>';
+				$shopping = '<p>If you have any queries or concerns do not hesitate to get in touch with us at <a href="mailto:info@nairobisingles.com">info@nairobisingles.com</a> </p>';
+				$sender_email = 'info@nairobisingles.com';
+				$from = 'Nairobisingles';
+				
+				$response = $this->email_model->send_mandrill_mail($email, $name, $subject, $message, $sender_email, $shopping, $from, $button, $cc);
+				
+				$data['result'] = 'success';
+				$data['message'] = 'Your password has been reset and mailed to '.$email.'. Please use that password to sign in here';
+			}
+			else
+			{
+				$data['result'] = 'fail';
+				$data['message'] = 'Unable to reset your password. Please try again';
+			}
 		}
+		
 		else
 		{
-			return FALSE;
+			$data['result'] = 'fail';
+			$data['message'] = 'Email not found. Please check the supplied email address and try again';
 		}
+		
+		return $data;
 	}
 	
 	public function get_new_orders()

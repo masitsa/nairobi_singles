@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
-#$config['base_url']	= 'http://localhost/nairobi_singles/';
-$config['base_url']	= 'https://www.nairobisingles.com/';
+$config['base_url']	= 'http://localhost/nairobi_singles/';
+#$config['base_url']	= 'https://www.nairobisingles.com/';
 #$config['base_url']	= 'http://development.nairobisingles.com/';
 
 /*

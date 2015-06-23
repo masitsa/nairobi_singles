@@ -1,6 +1,6 @@
 <?php   if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once "./application/modules/site/controllers/account.php";
+require_once "./application/modules/mobile/controllers/account.php";
 
 class Messages extends account 
 {
@@ -14,7 +14,7 @@ class Messages extends account
 		$this->like_amount = $this->config->item('like_cost');
 	}
 	
-	public function inbox($search = '__', $order_by = 'created') 
+	public function inbox($search = '__', $order_by = 'last_modified') 
 	{
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
 		$v_data['genders_query'] = $this->profile_model->get_gender();
@@ -38,7 +38,7 @@ class Messages extends account
 		//ordering products
 		switch ($order_by)
 		{
-			case 'created':
+			case 'last_modified':
 				$order_method = 'DESC';
 			break;
 			
@@ -124,6 +124,7 @@ class Messages extends account
 		$v_data['profile_image_path'] = $this->profile_image_path;
 
 		$data['result']= $this->load->view('messages/inbox', $v_data, true);
+		$data['total'] = $this->messages_model->count_unread_messages($this->client_id, $this->messages_path);
 		$data['username']= $this->session->userdata('client_username');
 		echo json_encode($data);
 	}
@@ -169,7 +170,18 @@ class Messages extends account
 	
 	public function count_unread_messages()
 	{
-		$data['unread_messages'] = $this->messages_model->count_unread_messages($this->client_id, $this->messages_path);
+		$data['total_received'] = $this->messages_model->count_unread_messages($this->client_id, $this->messages_path);
+		$data['messages'] = $this->view_last_messages($this->client_id);
+		$data['account_balance'] = $this->account_balance;
+		
+		echo json_encode($data);
+	}
+	
+	public function count_unread_messages2()
+	{
+		$data['total_received'] = $this->messages_model->count_unread_messages(5, $this->messages_path);
+		$data['messages'] = $this->view_last_messages(5);
+		$v_data['account_balance'] = $this->account_balance;
 		
 		echo json_encode($data);
 	}
@@ -239,19 +251,21 @@ class Messages extends account
 	{
 		/*$this->form_validation->set_error_delimiters('', '');
 		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');*/
-		$message = $_GET['client_message_details'];
-		$receiver_id = $_GET['receiver_id'];
+		$message = $this->input->post('client_message_details');
+		$receiver_id = $this->input->post('receiver_id');
+		$web_name = $this->input->post('web_name');
 		
 		if(!empty($message))
 		{
-			$data['client_message_details'] = mysql_real_escape_string($message);
+			$data['client_message_details'] = $message;
 			$data['client_id'] = $this->client_id;
 			$data['receiver_id'] = $receiver_id;
 			$data['created'] = date('Y-m-d H:i:s');
 			$content = json_encode($data);
+			$return = array();
 			
 			//create file name
-			$file_name = $this->profile_model->create_file_name($this->client_id, $receiver_id);
+			$file_name = $this->profile_model->create_file_name($this->client_id, $receiver_id, $web_name);
 			$file_path = $this->messages_path.'//'.$file_name;
 			$base_path = $this->messages_path;
 			
@@ -272,6 +286,7 @@ class Messages extends account
 					{
 					}
 					$return = $this->view_sent_message($data['client_message_details'], $this->client_id, $data['created']);
+					$return['account_balance'] = $this->payments_model->get_account_balance($this->client_id);
 				}
 				
 				else
@@ -293,6 +308,7 @@ class Messages extends account
 				{
 				}
 				$return = $this->view_sent_message($data['client_message_details'], $this->client_id, $data['created']);
+				$return['account_balance'] = $this->payments_model->get_account_balance($this->client_id);
 			}
 		}
 		
@@ -301,7 +317,7 @@ class Messages extends account
 			$return = 'false';
 		}
 		
-		echo $_GET['callback'].'(' . json_encode($return) . ')';
+		echo json_encode($return);
 	}
 	
 	public function view_sent_message($message, $client_id, $created)
@@ -329,5 +345,47 @@ class Messages extends account
 				</li>';
 				
 		return $data;
+	}
+	
+	public function view_last_messages($client_id)
+	{
+		//get all unread messages from the db
+		$unread_query = $this->messages_model->get_unread_messages($client_id);
+		$return = array();
+		//echo $unread_query->num_rows();
+		//get all unread messages data
+		if($unread_query->num_rows() > 0)
+		{
+			foreach($unread_query->result() as $res)
+			{
+				$last_receiver_web_name = $res->last_receiver_web_name;
+				$last_sender_web_name = $res->last_sender_web_name;
+				$file_name = $res->message_file_name;
+				//for smileys
+				$image_array = get_clickable_smileys($this->smiley_location, 'instant_message2');
+				$col_array = $this->table->make_columns($image_array, 12);
+				
+				$v_data['smiley_table'] = $this->profile_model->generate_emoticons($col_array);
+				$v_data['smiley_location'] = $this->smiley_location;
+				
+				$receiver_id = $this->messages_model->get_receiver_id($last_sender_web_name);
+				$v_data['sender'] = $this->profile_model->get_client($receiver_id);
+				$v_data['messages'] = $this->profile_model->get_last_messages($file_name, $this->messages_path);
+				//$v_data['received_messages'] = $this->profile_model->count_received_messages($v_data['messages']);
+				$v_data['profile_image_location'] = $this->profile_image_location;
+				$v_data['profile_image_path'] = $this->profile_image_path;
+				$v_data['account_balance'] = $this->account_balance;
+		
+				$data['result']= $this->load->view('messages/view_last_message', $v_data, true);
+				$data['web_name']= $last_receiver_web_name;
+				$data['sender_web_name']= $last_sender_web_name;
+				array_push($return, $data);
+			}
+			//mark messages as retrieved
+			$data_update['read_status'] = 1;
+			$this->db->where('read_status = 0 AND last_receiver_id = '.$client_id);
+			$this->db->update('client_message', $data_update);
+		}
+		return $return;
 	}
 }

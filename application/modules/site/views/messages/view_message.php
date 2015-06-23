@@ -56,6 +56,7 @@
 								
 								echo form_open('site/profile/message_profile/1', array('class' => 'send_message2', 'id' => 'compose_message'));
 								echo form_hidden('receiver_id', $receiver_id);
+								echo form_hidden('web_name', $web_name);
 							?>
 							<div class="form-group login-username">
 								<div >

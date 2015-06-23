@@ -7,7 +7,7 @@ class Profile_model extends CI_Model
 		$resize['width'] = 500;
 		$resize['height'] = 500;
 		
-		if(!empty($_FILES['profile_image']['tmp_name']))
+		if(!empty($_FILES['file']['tmp_name']))
 		{
 			$image = $this->session->userdata('profile_file_name');
 			
@@ -32,7 +32,7 @@ class Profile_model extends CI_Model
 				}
 			}
 			//Upload image
-			$response = $this->file_model->upload_banner($profile_image_path, 'profile_image', $resize);
+			$response = $this->file_model->upload_banner($profile_image_path, 'file', $resize);
 			if($response['check'])
 			{
 				$file_name = $response['file_name'];
@@ -180,9 +180,9 @@ class Profile_model extends CI_Model
 		return $query;
 	}
 	
-	public function register_profile_details($client_id, $client_image, $client_thumb)
+	public function register_profile_details($client_id)
 	{
-		$parent_neighbourhood = $this->input->post('parent');
+		/*$parent_neighbourhood = $this->input->post('parent');
 		$child_neighbourhood = $this->input->post('child');
 		
 		if(empty($child_neighbourhood))
@@ -192,18 +192,16 @@ class Profile_model extends CI_Model
 		else
 		{
 			$neighbourhood_id = $child_neighbourhood;
-		}
+		}*/
 		
 		$newdata = array(
 			   'client_about'			=> $this->input->post('client_about'),
 			   'client_dob'				=> $this->input->post('client_dob3').'-'.$this->input->post('client_dob2').'-'.$this->input->post('client_dob1'),
-			   'neighbourhood_id'		=> $neighbourhood_id,
+			   //'neighbourhood_id'		=> $neighbourhood_id,
 			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id'),
 			   'gender_id'				=> $this->input->post('gender_id'),
 			   'age_group_id'			=> $this->input->post('age_group_id'),
-			   'encounter_id'			=> $this->input->post('encounter_id'),
-			   'client_image'			=> $client_image,
-			   'client_thumb'			=> $client_thumb
+			   'encounter_id'			=> $this->input->post('encounter_id')
 		   );
 		
 		$this->db->where('client_id', $client_id);
@@ -250,7 +248,7 @@ class Profile_model extends CI_Model
 	public function get_all_clients($table, $where, $per_page, $page, $limit = NULL, $order_by = 'created', $order_method = 'DESC')
 	{
 		$this->db->from($table);
-		$this->db->select('client.*, gender.gender_name, encounter.encounter_name, neighbourhood.neighbourhood_name');
+		$this->db->select('client.*, gender.gender_name, encounter.encounter_name');
 		$this->db->where($where);
 		$this->db->order_by($order_by, $order_method);
 		
@@ -541,8 +539,20 @@ class Profile_model extends CI_Model
 		return $query;
 	}
 	
-	public function create_file_name($client_id, $receiver_id)
+	public function create_file_name($client_id, $receiver_id, $web_name)
 	{
+		//get sender web name
+		$this->db->select('client_username');
+		$this->db->where('client_id', $client_id);
+		$client_query = $this->db->get('client');
+		$sender_web_name = '';
+		
+		if($client_query->num_rows() > 0)
+		{
+			$client_row = $client_query->row();
+			$sender_web_name = $this->create_web_name($client_row->client_username);
+		}
+		
 		//check if file name session exists
 		$file_name = $this->session->userdata('message_file_name_'.$receiver_id);
 		
@@ -557,6 +567,10 @@ class Profile_model extends CI_Model
 				$file_name = $row->message_file_name;
 				$client_message_id = $row->client_message_id;
 				$update_data['last_chatted'] = date('Y-m-d H:i:s');
+				$update_data['last_receiver_web_name'] = $web_name;
+				$update_data['last_sender_web_name'] = $sender_web_name;
+				$update_data['last_receiver_id'] = $receiver_id;
+				$update_data['read_status'] = 0;
 				
 				//update last date chatted
 				$this->db->where('client_message_id', $client_message_id);
@@ -574,9 +588,33 @@ class Profile_model extends CI_Model
 				$data['receiver_id'] = $receiver_id;
 				$data['created'] = date('Y-m-d H:i:s');
 				$data['last_chatted'] = date('Y-m-d H:i:s');
+				$data['last_receiver_web_name'] = $web_name;
+				$data['last_sender_web_name'] = $sender_web_name;
+				$data['last_receiver_id'] = $receiver_id;
+				$data['read_status'] = 0;
 				$this->db->insert('client_message', $data);
 			}
 			$this->session->set_userdata('message_file_name_'.$receiver_id, $file_name);
+		}
+		
+		else
+		{
+			$query = $this->chat_exists($client_id, $receiver_id);
+			
+			if($query->num_rows() > 0)
+			{
+				$row = $query->row();
+				$client_message_id = $row->client_message_id;
+				$update_data['last_chatted'] = date('Y-m-d H:i:s');
+				$update_data['last_receiver_web_name'] = $web_name;
+				$update_data['last_sender_web_name'] = $sender_web_name;
+				$update_data['last_receiver_id'] = $receiver_id;
+				$update_data['read_status'] = 0;
+				
+				//update last date chatted
+				$this->db->where('client_message_id', $client_message_id);
+				$this->db->update('client_message', $update_data);
+			}
 		}
 		
 		return $file_name;
@@ -600,6 +638,23 @@ class Profile_model extends CI_Model
 			}
 		}
 		
+		if(!empty($file_name))
+		{
+			$file_path = $messages_path.'/'.$file_name;
+			$content = $this->file_model->get_file_contents($file_path, $messages_path);
+			$message_array = json_decode('['.$content.']');
+			//var_dump($message_array);die();
+		}
+		
+		else
+		{
+			$message_array = NULL;
+		}
+		return $message_array;
+	}
+	
+	public function get_last_messages($file_name, $messages_path)
+	{	
 		if(!empty($file_name))
 		{
 			$file_path = $messages_path.'/'.$file_name;

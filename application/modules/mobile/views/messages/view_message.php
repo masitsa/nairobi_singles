@@ -40,7 +40,14 @@ if(is_array($messages))
 		{
 			echo 
 			'
-			<li class="row">
+			<div class="messages-date">'.date('jS M Y',strtotime($created)).' <span>'.date('H:i a',strtotime($created)).'</span></div>
+			<div class="message message-with-avatar message-last message-received">
+				<div class="message-name">'.$receiver_username.'</div>
+				<div class="message-text">'.$client_message_details.'</div>
+				<div style="background-image:url('.$receiver_thumb.')" class="message-avatar"></div>
+			</div>
+			
+			<!--<li class="row">
 				<div class="col-xs-3">
 					<img src="'.$receiver_thumb.'" class="img-responsive">
 				</div>
@@ -52,7 +59,7 @@ if(is_array($messages))
 						<div class="message-date">'.date('jS M Y H:i a',strtotime($created)).'</div>
 					</div>
 				</div>
-			</li>
+			</li>-->
 			';
 		}
 		
@@ -61,7 +68,17 @@ if(is_array($messages))
 		{
 			echo 
 			'
-				<li class="row">
+				<div class="messages-date">'.date('jS M Y',strtotime($created)).' <span>'.date('H:i a',strtotime($created)).'</span></div>
+				<div class="message message-sent">
+					<div class="message-text">'.$client_message_details.'</div>
+				</div>
+				
+				<div class="message message-sent message-pic">
+					<div class="message-text"><img src="http://lorempixel.com/300/300/"></div>
+					<div class="message-label">Delivered</div>
+				</div>
+				
+				<!--<li class="row">
 					<div class="col-xs-9">
 						<div class="bubble">
 							<div>'.$client_message_details.'</div>
@@ -72,7 +89,7 @@ if(is_array($messages))
 					<div class="col-xs-3">
 						<img src="'.$client_thumb.'" class="img-responsive">
 					</div>
-				</li>
+				</li>-->
 			';
 		}
 	}

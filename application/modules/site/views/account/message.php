@@ -4,6 +4,7 @@
 	{
 		$row = $receiver->row();
 		$receiver_username = $row->client_username;
+		$web_name = $this->profile_model->create_web_name($receiver_username);
 		$receiver_thumb = $profile_image_location.$row->client_thumb;
 		$receiver_id = $row->client_id;
 	}
@@ -37,6 +38,7 @@
 		
     	echo form_open('site/profile/message_profile/2', array('class' => 'send_message'));
 		echo form_hidden('receiver_id', $receiver_id);
+		echo form_hidden('web_name', $web_name);
 	?>
     <div class="form-group login-username">
         <div >

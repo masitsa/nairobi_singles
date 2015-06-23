@@ -25,6 +25,7 @@ class Login extends MX_Controller
 		}
     
 		$this->load->model('login_model');
+		$this->load->library('Mandrill', $this->config->item('mandrill_key'));
 		
 		$this->load->library('encrypt');
 	}
@@ -40,12 +41,14 @@ class Login extends MX_Controller
 		
 		if($result != FALSE)
 		{
+			$this->load->model('payments_model');
 			//create user's login session
 			$newdata = array(
                    'client_login_status'    => TRUE,
                    'client_username'     	=> $result[0]->client_username,
                    'client_email'     		=> $result[0]->client_email,
                    'client_id'  			=> $result[0]->client_id,
+                   'account_balance'  		=> $this->payments_model->get_account_balance( $result[0]->client_id),
                    'client_code'  			=> md5($result[0]->client_id)
                );
 			$this->session->set_userdata($newdata);
@@ -78,46 +81,36 @@ class Login extends MX_Controller
 	
 	public function register_user()
 	{
-		$v_data['client_password_error'] = '';
-		$v_data['client_confirm_password_error'] = '';
-		$v_data['client_email'] = '';
-		$v_data['accept_terms'] = '';
-		
-		$this->form_validation->set_error_delimiters('', '');
+		$this->form_validation->set_rules('email', 'Email', 'trim|valid_email|is_unique[client.client_email]|required|xss_clean');
 		$this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[client.client_username]|xss_clean');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
-		$this->form_validation->set_rules('email', 'Email', 'trim|valid_email|is_unique[client.client_email]|required|xss_clean');
 		$this->form_validation->set_rules('client_agree', 'Agree', 'trim|required|xss_clean');
 		
 		//if form conatins invalid data
 		if ($this->form_validation->run())
 		{
-			if($this->login_model->register_client_details())
+			$client_id = $this->login_model->register_client_details();
+			
+			if($client_id > 0)
 			{
-				if($this->login_model->validate_client($this->input->post('email'),$this->input->post('password')))
-				{	
-					$this->load->model('site/payments_model');
-					//grant 100 chat credits for the first 100 users
-					if($this->payments_model->first_hundred($this->session->userdata('client_id')))
-					{
-					}
-					
-					else
-					{
-					}
-					$response['message'] = 'success';
-					$response['result'] = 'You have successfully created your account. We need some info from you so that we can link you with people looking for you';
+				$this->load->model('site/payments_model');
+				//grant 100 chat credits for the first 100 users
+				if($this->payments_model->first_hundred($client_id))
+				{
 				}
+				
 				else
 				{
-					$data['message'] = 'fail';
-					$data['result'] = 'Please sign in to access your account';
 				}
+				$response['account_balance'] = $this->payments_model->get_account_balance($client_id);
+				$response['message'] = 'success';
+				$response['result'] = 'You have successfully created your account. We need some info from you so that we can link you with people looking for you';
 			}
 			
 			else
 			{
-				$this->session->set_userdata('error_message', 'Unable to create account. Please try again');
+				$response['message'] = 'fail';
+				$response['result'] = 'Unable to create your account. Plese try again';
 			}
 		}
 		else
@@ -125,7 +118,7 @@ class Login extends MX_Controller
 			$validation_errors = validation_errors();
 			
 			//repopulate form data if validation errors are present
-			if(!empty($validation_errors))
+			if(empty($validation_errors))
 			{
 				$response['message'] = 'fail';
 				$response['result'] = 'Ensure that you have entered all the values in the form provided';
@@ -139,6 +132,22 @@ class Login extends MX_Controller
 			}
 		}
 		echo json_encode($response);
+	}
+    
+	/*
+	*
+	*	Action of a forgotten password
+	*
+	*/
+	public function forgot_password($email)
+	{
+		$this->load->model('email_model');
+		
+		//reset password
+		$data = array();
+		$data = $this->login_model->reset_client_password($email);
+		
+		echo json_encode($data);
 	}
 }
 ?>

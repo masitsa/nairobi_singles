@@ -65,14 +65,18 @@ class Messages_model extends CI_Model
 				if(is_array($message_array))
 				{
 					$total_messages = count($message_array);
-					$last_message = $total_messages - 1;
 					
-					$message_data = $message_array[$last_message];
-					$receiver_id = $message_data->receiver_id;
-					
-					if($receiver_id == $client_id)
+					if($total_messages > 0)
 					{
-						$total_received++;
+						$last_message = $total_messages - 1;
+						
+						$message_data = $message_array[$last_message];
+						$receiver_id = $message_data->receiver_id;
+						
+						if($receiver_id == $client_id)
+						{
+							$total_received++;
+						}
 					}
 				}
 			}

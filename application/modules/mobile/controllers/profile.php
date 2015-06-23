@@ -1,30 +1,12 @@
 <?php   if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once "./application/modules/site/controllers/account.php";
+require_once "./application/modules/mobile/controllers/account.php";
 
 class Profile extends account 
 {
 	function __construct()
 	{
 		parent:: __construct();
-		// Allow from any origin
-		if (isset($_SERVER['HTTP_ORIGIN'])) {
-			header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-			header('Access-Control-Allow-Credentials: true');
-			header('Access-Control-Max-Age: 86400');    // cache for 1 day
-		}
-	
-		// Access-Control headers are received during OPTIONS requests
-		if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-	
-			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-				header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
-	
-			if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-				header("Access-Control-Allow-Headers:        {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-	
-			exit(0);
-		}
 	}
 	
 	public function update_profile_image()
@@ -180,60 +162,35 @@ class Profile extends account
 		$this->load->view('site/templates/home_page', $data);
 	}
 	
-	public function like_profile($like_id, $ajax = NULL, $page = NULL)
+	public function like_profile($web_name)
 	{
+		$like_id = $this->messages_model->get_receiver_id($web_name);
+		$client_username = str_replace("-", " ", $web_name);
+		
 		if($this->profile_model->like_profile($this->client_id, $like_id))
 		{
 			if($this->payments_model->bill_client($this->client_id, $this->like_amount))
 			{
+				$data['response'] = 'success';
+				$data['message'] = 'You have liked '.$client_username;
+				$data['account_balance'] = $this->payments_model->get_account_balance($this->client_id);
 			}
 			
 			else
 			{
-			}
-			
-			if($ajax == 'true')
-			{
-				$this->session->set_userdata('success_message', 'You have liked a profile');
-				
-				if($page == NULL)
-				{
-					redirect('browse');
-				}
-				else
-				{
-					redirect('browse/'.$page);
-				}
-			}
-			
-			else
-			{
-				echo 'true';
+				$data['response'] = 'success';
+				$data['message'] = 'You have liked '.$client_username;
+				$data['account_balance'] = $this->account_balance;
 			}
 		}
 		
 		else
 		{
-			
-			if($ajax == 'true')
-			{
-				$this->session->set_userdata('error_message', 'Unable to like profile');
-				
-				if($page == NULL)
-				{
-					redirect('browse');
-				}
-				else
-				{
-					redirect('browse/'.$page);
-				}
-			}
-			
-			else
-			{
-				echo 'false';
-			}
+			$data['response'] = 'fail';
+			$data['message'] = 'Unable to like '.$client_username;
 		}
+		
+		echo json_encode($data);
 	}
 	
 	public function unlike_profile($like_id, $ajax = NULL, $page = NULL)
@@ -414,52 +371,153 @@ class Profile extends account
 		echo json_encode($v_data);
 	}
 	
-	public function edit_profile()
+	public function edit_profile_image()
 	{
-		/*$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
-		$v_data['genders_query'] = $this->profile_model->get_gender();
-		$v_data['age_groups_query'] = $this->profile_model->get_age_group();
-		$v_data['encounters_query'] = $this->profile_model->get_encounter();*/
+		$client_query = $this->profile_model->get_client($this->client_id);
+		$row = $client_query->row();
 		
-		
-		//check if neighbourhood is parent
-		$parent = $this->profile_model->is_parent($neighbourhood_id);
-		
-		if($parent == 0)
-		{
-			$v_data['parent'] = $neighbourhood_id;
-			$v_data['child'] = '';
-		}
-		
-		else
-		{
-			$v_data['parent'] = $parent;
-			$v_data['child'] = $neighbourhood_id;
-		}
+		/*$v_data['file'] = $_FILES["file"]["type"];
 		
 		//upload image if it has been selected
 		$response = $this->profile_model->upload_profile_image($this->profile_image_path, $row->client_image, $row->client_thumb);
 		if($response)
 		{
-			$v_data['profile_image_location'] = $this->profile_image_location.$this->session->userdata('profile_file_name');
+			$profile_image_location = $this->profile_image_location.$this->session->userdata('profile_file_name');
 		}
 		
 		//case of upload error
 		else
 		{
-			$v_data['profile_image_error'] = $this->session->userdata('profile_error_message');
+			$profile_image_error = $this->session->userdata('profile_error_message');
 		}
 		
+		if(!empty($profile_image_error))
+		{
+			$v_data['response'] = 'failure';
+			$v_data['message'] = $profile_image_error;
+		}
+		
+		else
+		{
+			$v_data['response'] = 'success';
+			$v_data['message'] = $profile_image_location;
+		}*/
+		if(!empty($_FILES['file']['tmp_name']))
+		{
+			$profile_image_path = $this->profile_image_path;
+			$client_image = $row->client_image;
+			$client_thumb = $row->client_thumb;
+			
+			//delete previous images
+			if(!empty($client_image))
+			{
+				$image = $client_image;
+				
+				//delete any other uploaded image
+				if($this->file_model->delete_file($profile_image_path."\\".$image, $profile_image_path))
+				{
+					//delete any other uploaded thumbnail
+					$this->file_model->delete_file($profile_image_path."\\thumbnail_".$image, $profile_image_path);
+				}
+				
+				else
+				{
+					$this->file_model->delete_file($profile_image_path."/".$image, $profile_image_path);
+					$this->file_model->delete_file($profile_image_path."/thumbnail_".$image, $profile_image_path);
+				}
+			}
+			
+			//Upload image
+			$new_image_name = md5(date('Y-m-d H:i:s')).".jpg";
+			if(move_uploaded_file($_FILES["file"]["tmp_name"], $this->profile_image_path."/".$new_image_name))
+			{
+				//resize the image
+				$resize['width'] = 500;
+				$resize['height'] = 500;
+				$master_dim = 'width';
+				
+				$resize_conf = array(
+						'source_image'  => $this->profile_image_path."/".$new_image_name, 
+						'width' => $resize['width'],
+						'height' => $resize['height'],
+						'master_dim' => $master_dim,
+						'maintain_ratio' => TRUE
+					);
+	
+				// initializing
+				$this->image_lib->initialize($resize_conf);
+				// do it!
+				if ( ! $this->image_lib->resize())
+				{
+					$v_data['response'] = 'failure';
+					$v_data['message'] =  $this->image_lib->display_errors();
+				}
+				else
+				{
+					$width = $height = 150;
+					$resize_conf2 = array(
+						'source_image'  => $this->profile_image_path."/".$new_image_name,
+						'new_image'     => $this->profile_image_path."/thumbnail_".$new_image_name,
+						'create_thumb'  => FALSE,
+						'width' => $width,
+						'height' => $height,
+						'maintain_ratio' => true,
+					);
+					
+					$this->image_lib->initialize($resize_conf2);
+					 
+					 if ( ! $this->image_lib->resize())
+					{
+						$v_data['response'] = 'failure';
+						$v_data['message'] =  $this->image_lib->display_errors();
+					}
+					
+					else
+					{
+						//update db
+						$update_data['client_image'] = $new_image_name;
+						$update_data['client_thumb'] = "thumbnail_".$new_image_name;
+						
+						$this->db->where('client_id', $this->client_id);
+						
+						if($this->db->update('client', $update_data))
+						{
+							$v_data['response'] = 'success';
+							$v_data['message'] =  $this->profile_image_location.'/'.$new_image_name;
+						}
+						
+						else
+						{
+							$v_data['response'] = 'fail';
+							$v_data['message'] =  'Unable to set your profile image. Please try again';
+						}
+					}
+				}
+			}
+		}
+		
+		//unable to upload image
+		else
+		{
+			$v_data['response'] = 'failure';
+			$v_data['message'] = 'Unable to upload image. Please try again';
+		}
+		
+		echo json_encode($v_data);
+	}
+	
+	public function edit_profile()
+	{
 		$youngest_year = date('Y')-17;
 		
-		$this->form_validation->set_error_delimiters('', '');
-		$this->form_validation->set_rules('parent', 'Neighbourhood', 'trim|required|xss_clean');
-		$this->form_validation->set_rules('child', 'Location', 'trim|xss_clean');
-		$this->form_validation->set_rules('client_about', 'About you', 'trim|required|min_length[20]|xss_clean');
+		//$this->form_validation->set_error_delimiters('', '');
+		/*$this->form_validation->set_rules('parent', 'Neighbourhood', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('child', 'Location', 'trim|xss_clean');*/
+		$this->form_validation->set_rules('client_about', 'About you', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('client_dob1', 'Day of birth', 'trim|required|greater_than[0]|less_than[32]|xss_clean');
 		$this->form_validation->set_rules('client_dob2', 'Month of birth', 'trim|required|greater_than[0]|less_than[13]|xss_clean');
 		$this->form_validation->set_rules('client_dob3', 'Year of birth', 'trim|required|greater_than[1900]|less_than['.$youngest_year.']|xss_clean');
-		$this->form_validation->set_rules('client_looking_gender_id', 'Looking for', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('client_looking_gender_id', 'For a', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('gender_id', 'I am a', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('age_group_id', 'Aged', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('encounter_id', 'Encounter type', 'trim|required|xss_clean');
@@ -467,38 +525,46 @@ class Profile extends account
 		//if form conatins invalid data
 		if ($this->form_validation->run())
 		{
-			if($this->profile_model->register_profile_details($this->client_id, $this->session->userdata('profile_file_name'), $this->session->userdata('profile_thumb_name')))
+			if($this->profile_model->register_profile_details($this->client_id))
 			{
 				//redirect only if logo error isnt present
-				// echo success
+				$v_data['response'] = 'success';
+				$v_data['message'] = 'Your profile has been updated successfully';
+				
+				$client_query = $this->profile_model->get_client($this->client_id);
+				$row = $client_query->row();
+				
+				$v_data['gender_id'] = $row->gender_id;
+				$v_data['client_about'] = $row->client_about;
+				$v_data['client_looking_gender_id'] = $row->client_looking_gender_id;
+				$v_data['age_group_id'] = $row->age_group_id;
+				$v_data['encounter_id'] = $row->encounter_id;
+				$v_data['current_password'] = $row->client_password;
+				$client_dob = $row->client_dob;
+				$v_data['client_dob1'] = date('d',strtotime($client_dob));
+				$v_data['client_dob2'] = date('m',strtotime($client_dob));
+				$v_data['client_dob3'] = date('Y',strtotime($client_dob));
 			}
 			
 			else
 			{
-				
+				$v_data['response'] = 'failure';
+				$v_data['message'] = 'Unable to update your profile';
 			}
 		}
-		$validation_errors = validation_errors();
 		
-		//repopulate form data if validation errors are present
-		if(!empty($validation_errors))
-		{
-			
-		}
-		
-		//populate form data on initial load of page
 		else
 		{
-			if(!empty($v_data['profile_image_error']))
-			{
-				
-			}
-			
-			else
-			{
-			}
+			$v_data['response'] = 'failure';
+			$v_data['message'] = validation_errors();
 		}
 		
+		if(!empty($profile_image_error))
+		{
+			$v_data['response'] = 'failure';
+			$v_data['message'] = $profile_image_error;
+		}
+		echo json_encode($v_data);
 	}
     
 	/*

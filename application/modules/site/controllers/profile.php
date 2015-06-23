@@ -319,6 +319,7 @@ class Profile extends account
 	{
 		$this->form_validation->set_error_delimiters('', '');
 		$this->form_validation->set_rules('client_message_details', 'Message', 'required|xss_clean');
+		$this->form_validation->set_rules('web_name', 'Web name', 'required|xss_clean');
 		
 		if($this->form_validation->run())
 		{
@@ -327,9 +328,10 @@ class Profile extends account
 			$data['receiver_id'] = $this->input->post('receiver_id');
 			$data['created'] = date('Y-m-d H:i:s');
 			$content = json_encode($data);
-			
+			$web_name = $this->input->post('web_name');
 			//create file name
-			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'));
+			$file_name = $this->profile_model->create_file_name($this->client_id, $this->input->post('receiver_id'), $web_name);
+			
 			$file_path = $this->messages_path.'//'.$file_name;
 			$base_path = $this->messages_path;
 			

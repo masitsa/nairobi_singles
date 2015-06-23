@@ -248,7 +248,7 @@ class CI_DB_driver {
 	 * @return	mixed
 	 */
 	function query($sql, $binds = FALSE, $return_object = TRUE)
-	{//echo $sql;
+	{//echo $sql.'<br/>';
 		if ($sql == '')
 		{
 			if ($this->db_debug)

@@ -541,8 +541,20 @@ class Profile_model extends CI_Model
 		return $query;
 	}
 	
-	public function create_file_name($client_id, $receiver_id)
+	public function create_file_name($client_id, $receiver_id, $web_name = NULL)
 	{
+		//get sender web name
+		$this->db->select('client_username');
+		$this->db->where('client_id', $client_id);
+		$client_query = $this->db->get('client');
+		$sender_web_name = '';
+		
+		if($client_query->num_rows() > 0)
+		{
+			$client_row = $client_query->row();
+			$sender_web_name = $this->create_web_name($client_row->client_username);
+		}
+		
 		//check if file name session exists
 		$file_name = $this->session->userdata('message_file_name_'.$receiver_id);
 		
@@ -557,6 +569,10 @@ class Profile_model extends CI_Model
 				$file_name = $row->message_file_name;
 				$client_message_id = $row->client_message_id;
 				$update_data['last_chatted'] = date('Y-m-d H:i:s');
+				$update_data['last_receiver_web_name'] = $web_name;
+				$update_data['last_sender_web_name'] = $sender_web_name;
+				$update_data['last_receiver_id'] = $receiver_id;
+				$update_data['read_status'] = 0;
 				
 				//update last date chatted
 				$this->db->where('client_message_id', $client_message_id);
@@ -574,9 +590,33 @@ class Profile_model extends CI_Model
 				$data['receiver_id'] = $receiver_id;
 				$data['created'] = date('Y-m-d H:i:s');
 				$data['last_chatted'] = date('Y-m-d H:i:s');
+				$data['last_receiver_web_name'] = $web_name;
+				$data['last_sender_web_name'] = $sender_web_name;
+				$data['last_receiver_id'] = $receiver_id;
+				$data['read_status'] = 0;
 				$this->db->insert('client_message', $data);
 			}
 			$this->session->set_userdata('message_file_name_'.$receiver_id, $file_name);
+		}
+		
+		else
+		{
+			$query = $this->chat_exists($client_id, $receiver_id);
+			
+			if($query->num_rows() > 0)
+			{
+				$row = $query->row();
+				$client_message_id = $row->client_message_id;
+				$update_data['last_chatted'] = date('Y-m-d H:i:s');
+				$update_data['last_receiver_web_name'] = $web_name;
+				$update_data['last_sender_web_name'] = $sender_web_name;
+				$update_data['last_receiver_id'] = $receiver_id;
+				$update_data['read_status'] = 0;
+				
+				//update last date chatted
+				$this->db->where('client_message_id', $client_message_id);
+				$this->db->update('client_message', $update_data);
+			}
 		}
 		
 		return $file_name;
@@ -600,6 +640,23 @@ class Profile_model extends CI_Model
 			}
 		}
 		
+		if(!empty($file_name))
+		{
+			$file_path = $messages_path.'/'.$file_name;
+			$content = $this->file_model->get_file_contents($file_path, $messages_path);
+			$message_array = json_decode('['.$content.']');
+			//var_dump($message_array);die();
+		}
+		
+		else
+		{
+			$message_array = NULL;
+		}
+		return $message_array;
+	}
+	
+	public function get_last_messages($file_name, $messages_path)
+	{	
 		if(!empty($file_name))
 		{
 			$file_path = $messages_path.'/'.$file_name;

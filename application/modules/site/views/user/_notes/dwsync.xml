@@ -8,4 +8,8 @@
 <file name="my_details.php" server="192.186.246.118/public_html/development/" local="130520548639341238" remote="130707622200000000" Dst="0" />
 <file name="orders_list.php" server="192.186.246.118/public_html/development/" local="130520507213101793" remote="130707622200000000" Dst="0" />
 <file name="wishlist.php" server="192.186.246.118/public_html/development/" local="130520566778178720" remote="130707622200000000" Dst="0" />
+<file name="my_account.php" server="192.186.246.118/public_html/" local="130520570339742430" remote="130772309400000000" Dst="0" />
+<file name="my_details.php" server="192.186.246.118/public_html/" local="130520548639341238" remote="130772309400000000" Dst="0" />
+<file name="orders_list.php" server="192.186.246.118/public_html/" local="130520507213101793" remote="130772309400000000" Dst="0" />
+<file name="wishlist.php" server="192.186.246.118/public_html/" local="130520566778178720" remote="130772309400000000" Dst="0" />
 </dwsync>

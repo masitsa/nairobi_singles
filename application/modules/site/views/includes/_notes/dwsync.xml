@@ -13,6 +13,11 @@
 <file name="page_header.php" server="192.186.246.118/public_html/development/" local="130719260087337812" remote="130718899800000000" Dst="0" />
 <file name="footer.php" server="192.186.246.118/public_html/test/" local="130723536324079065" remote="130723178400000000" Dst="0" />
 <file name="top_navigation.php" server="192.186.246.118/public_html/test/" local="130722848363300299" remote="130722494400000000" Dst="0" />
-<file name="footer.php" server="192.186.246.118/public_html/" local="130723536324079065" remote="130723177200000000" Dst="0" />
+<file name="footer.php" server="192.186.246.118/public_html/" local="130772667188290432" remote="130772308800000000" Dst="0" />
 <file name="top_navigation.php" server="192.186.246.118/public_html/" local="130731265968664682" remote="130730905800000000" Dst="0" />
+<file name="header.php" server="192.186.246.118/public_html/" local="130713385953954353" remote="130772308800000000" Dst="0" />
+<file name="header_homepage.php" server="192.186.246.118/public_html/" local="130710563892969227" remote="130772308800000000" Dst="0" />
+<file name="home_footer.php" server="192.186.246.118/public_html/" local="130697723224988444" remote="130772308800000000" Dst="0" />
+<file name="modal_login.php" server="192.186.246.118/public_html/" local="130520408317575292" remote="130772308800000000" Dst="0" />
+<file name="page_header.php" server="192.186.246.118/public_html/" local="130719260087337812" remote="130772308800000000" Dst="0" />
 </dwsync>

@@ -6,5 +6,9 @@
 <file name="message_details.php" server="192.186.246.118/public_html/development/" local="130718399345997022" remote="130718038800000000" Dst="0" />
 <file name="view_message.php" server="192.186.246.118/public_html/development/" local="130718569657402037" remote="130718212200000000" Dst="0" />
 <file name="display_messages.php" server="192.186.246.118/public_html/test/" local="130723452618901832" remote="130723095000000000" Dst="0" />
-<file name="view_message.php" server="192.186.246.118/public_html/" local="130731209742928754" remote="130730850600000000" Dst="0" />
+<file name="view_message.php" server="192.186.246.118/public_html/" local="130772327563601711" remote="130772308800000000" Dst="0" />
+<file name="display_messages.php" server="192.186.246.118/public_html/" local="130772274952048972" remote="130772308800000000" Dst="0" />
+<file name="inbox.php" server="192.186.246.118/public_html/" local="130707317948356892" remote="130772308800000000" Dst="0" />
+<file name="message_details.php" server="192.186.246.118/public_html/" local="130718399345997022" remote="130772308800000000" Dst="0" />
+<file name="showing.php" server="192.186.246.118/public_html/" local="130707159448631226" remote="130772308800000000" Dst="0" />
 </dwsync>

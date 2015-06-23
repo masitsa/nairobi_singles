@@ -41,6 +41,7 @@
                 <div class="tab-pane fade in active" id="home">
                 	<div class="list-group">
                     	<?php
+							$last_chatted = '';
                             if($messages->num_rows() > 0)
                             {
                                 $message = $messages->result();
@@ -72,16 +73,19 @@
 										$total_messages = count($sent_messages);
 										$last_message = $total_messages - 1;
 										
-										$message_data = $sent_messages[$last_message];
-										$client_message_details = $message_data->client_message_details;
-										$check_receiver_id = $message_data->receiver_id;
-										$last_chatted = $message_data->created;
-                                    	$mini_msg = implode(' ', array_slice(explode(' ', $client_message_details), 0, 10));
-									
-										//bold unread messages
-										if($check_receiver_id == $current_client_id)
+										if($total_messages > 0)
 										{
-											$unread = 1;
+											$message_data = $sent_messages[$last_message];
+											$client_message_details = $message_data->client_message_details;
+											$check_receiver_id = $message_data->receiver_id;
+											$last_chatted = $message_data->created;
+											$mini_msg = implode(' ', array_slice(explode(' ', $client_message_details), 0, 10));
+										
+											//bold unread messages
+											if($check_receiver_id == $current_client_id)
+											{
+												$unread = 1;
+											}
 										}
 									}
                                     $today_check = date('jS M Y',strtotime($last_chatted));

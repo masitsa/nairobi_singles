@@ -34,7 +34,7 @@
 				$client_message_details = $message_data->client_message_details;
 				$check_receiver_id = $message_data->receiver_id;
 				$last_chatted = $message_data->created;
-            	$mini_msg = implode(' ', array_slice(explode(' ', $client_message_details), 0, 10));
+            	$mini_msg = implode(' ', array_slice(explode(' ', $client_message_details), 0, 8));
 			
 				//bold unread messages
 				if($check_receiver_id == $current_client_id)
@@ -72,18 +72,24 @@
             
             echo
             '
-	            <a href="single_message.html?web_name='.$web_name.'" class="list-group-item">
-	                <div class="row">
-						<div class="message-image col-xs-4">
-							<img src="'.$image.'" alt="img" class="img-responsive">
-							<div class="center-align">
-								'.$client_username.'						
+					<li>
+						<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
+							<div class="row" style="width:100%;">
+								<div class="col-25" style="max-height:80px; max-width:80px; overflow:hidden;">
+									<img src="'.$image.'">
+								</div>
+								
+								<div class="col-75">
+									<div class="item-inner blog-list">
+										<div class="text">
+											<h4 class="title mt-5 mb-0">'.$client_username.'</h4>
+											<p>'.$mini_msg.'</p>
+										</div>
+									</div>
+								</div>
 							</div>
-						</div>  
-						<div class=" col-xs-6">'.$mini_msg.'</div>
-						<span class="badge">'.$date_display.'</span> 
-					</div>
-	            </a>
+						</a>
+					</li>
 	            ';
         }
     }

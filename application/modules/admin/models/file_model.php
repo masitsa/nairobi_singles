@@ -440,7 +440,7 @@ class File_model extends CI_Model
 	public function upload_banner($upload_path, $field_name, $resize, $master_dim = 'width')
 	{
 		$config = array(
-				'allowed_types'	=> 'JPG|JPEG|jpg|jpeg|gif|png',
+				'allowed_types'	=> 'JPG|JPEG|jpg|jpeg|gif|GIF|PNG|png',
 				'upload_path' 	=> $upload_path,
 				'quality' 		=> "100%",
 				'max_size'      => '0',

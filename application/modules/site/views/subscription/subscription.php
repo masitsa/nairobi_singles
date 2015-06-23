@@ -120,9 +120,9 @@
                         <table class="table table-condensed table-striped table-hover">
                         	<tr>
                             	<th>#</th>
-                            	<th>Purchased</th>
-                            	<th>Status</th>
+                            	<th>Created</th>
                             	<th>Credits</th>
+                            	<th>Status</th>
                             	<th></th>
                             </tr>
                         <?php
@@ -154,8 +154,8 @@
                             <tr>
                             	<td><?php echo $count;?></td>
                             	<td><?php echo $created;?></td>
+                            	<td><?php echo number_format($client_credit_amount, 0);?></td>
                             	<td><?php echo $status;?></td>
-                            	<td><?php echo $client_credit_amount;?></td>
                             	<td><?php echo $button;?></td>
                             </tr>
                             <?php
@@ -163,8 +163,8 @@
 							
 						?>
 						<tr>
-							<td colspan="4">Total</td>
-							<td><?php echo $total;?></td>
+							<td colspan="3">Total</td>
+							<td><?php echo number_format($total, 0);?></td>
 						</tr>
                         </table>
 						<?php
