@@ -10,11 +10,13 @@ class Messages extends account
 	function __construct()
 	{
 		parent:: __construct();
-		$this->message_amount = $this->config->item('message_cost');
-		$this->like_amount = $this->config->item('like_cost');
+		/*$this->message_amount = $this->config->item('message_cost');
+		$this->like_amount = $this->config->item('like_cost');*/
+		$this->message_amount = 0;
+		$this->like_amount = 0;
 	}
 	
-	public function inbox($search = '__', $order_by = 'last_modified') 
+	public function inbox($search = '__', $order_by = 'last_chatted') 
 	{
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
 		$v_data['genders_query'] = $this->profile_model->get_gender();
@@ -38,7 +40,7 @@ class Messages extends account
 		//ordering products
 		switch ($order_by)
 		{
-			case 'last_modified':
+			case 'last_chatted':
 				$order_method = 'DESC';
 			break;
 			
@@ -278,13 +280,13 @@ class Messages extends account
 					$this->file_model->write_to_file($file_path, $content);
 					
 					//bill client
-					if($this->payments_model->bill_client($this->client_id, $this->message_amount))
+					/*if($this->payments_model->bill_client($this->client_id, $this->message_amount))
 					{
 					}
 					
 					else
 					{
-					}
+					}*/
 					$return = $this->view_sent_message($data['client_message_details'], $this->client_id, $data['created']);
 					$return['account_balance'] = $this->payments_model->get_account_balance($this->client_id);
 				}
@@ -330,19 +332,7 @@ class Messages extends account
 			$client_thumb = $row->client_thumb;
 			$client_thumb = $this->profile_model->image_display($this->profile_image_path, $this->profile_image_location, $client_thumb);
 		}
-		$data['message'] = '
-				<li class="row">
-					<div class="col-xs-9">
-						<div class="bubble">
-							<div>'.$message.'</div>
-							<div class="message-date">'.date('jS M Y H:i a',strtotime($created)).'</div>
-						</div>
-					</div>
-					
-					<div class="col-xs-3">
-						<img src="'.$client_thumb.'" class="img-responsive">
-					</div>
-				</li>';
+		$data['message'] = '<div class="message message-sent"><div class="message-text">'.$message.'</div><div class="messages-date">'.date('jS M Y',strtotime($created)).' <span>'.date('H:i a',strtotime($created)).'</span></div></div><div class="message message-sent message-pic"><div class="message-label">Delivered</div></div>';
 				
 		return $data;
 	}

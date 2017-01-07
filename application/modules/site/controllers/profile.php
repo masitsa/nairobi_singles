@@ -10,8 +10,10 @@ class Profile extends account
 	function __construct()
 	{
 		parent:: __construct();
-		$this->message_amount = $this->config->item('message_cost');
-		$this->like_amount = $this->config->item('like_cost');
+		/*$this->message_amount = $this->config->item('message_cost');
+		$this->like_amount = $this->config->item('like_cost');*/
+		$this->message_amount = 0;
+		$this->like_amount = 0;
 	}
 	
 	public function update_profile_image()
@@ -171,13 +173,13 @@ class Profile extends account
 	{
 		if($this->profile_model->like_profile($this->client_id, $like_id))
 		{
-			if($this->payments_model->bill_client($this->client_id, $this->like_amount))
+			/*if($this->payments_model->bill_client($this->client_id, $this->like_amount))
 			{
 			}
 			
 			else
 			{
-			}
+			}*/
 			
 			if($ajax == 'true')
 			{

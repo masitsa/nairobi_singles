@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
 <file name="users_model.php" server="148.251.2.43/public_html/clothes/" local="130520630794250230" remote="130520892600000000" Dst="0" />
+<file name="brands_model.php" server="148.251.2.43/public_html/clothes/" local="130518885403596268" remote="130518912000000000" Dst="0" />
+<file name="categories_model.php" server="148.251.2.43/public_html/clothes/" local="130518897726511098" remote="130518912000000000" Dst="0" />
 <file name="products_model.php" server="148.251.2.43/public_html/clothes/" local="130538220182774054" remote="130538224800000000" Dst="0" />
+<file name="features_model.php" server="148.251.2.43/public_html/clothes/" local="130516350567040141" remote="130520574000000000" Dst="0" />
 <file name="file_model.php" server="148.251.2.43/public_html/clothes/" local="130535060761189971" remote="130535061000000000" Dst="0" />
 <file name="orders_model.php" server="148.251.2.43/public_html/clothes/" local="130520853648906787" remote="130520892600000000" Dst="0" />
 <file name="reports_model.php" server="148.251.2.43/public_html/clothes/" local="130538221272746397" remote="130538225400000000" Dst="0" />
-<file name="file_model.php" server="192.186.246.118/public_html/development/" local="130707932173724274" remote="130722496800000000" Dst="0" />
-<file name="orders_model.php" server="192.186.246.118/public_html/development/" local="130533555954468782" remote="130722496800000000" Dst="0" />
-<file name="products_model.php" server="192.186.246.118/public_html/development/" local="130538220182774054" remote="130722496800000000" Dst="0" />
-<file name="reports_model.php" server="192.186.246.118/public_html/development/" local="130538221272746397" remote="130722496800000000" Dst="0" />
-<file name="users_model.php" server="192.186.246.118/public_html/development/" local="130520630794250230" remote="130722496800000000" Dst="0" />
-<file name="clients_model.php" server="192.186.246.118/public_html/" local="130723774115368627" remote="130723418400000000" Dst="0" />
-<file name="orders_model.php" server="192.186.246.118/public_html/" local="130533555954468782" remote="130723389000000000" Dst="0" />
-<file name="credit_types_model.php" server="192.186.246.118/public_html/" local="130723739353631260" remote="130723389000000000" Dst="0" />
-<file name="reports_model.php" server="192.186.246.118/public_html/" local="130723774332104218" remote="130723417800000000" Dst="0" />
-<file name="client_messages_model.php" server="192.186.246.118/public_html/" local="130723783024388029" remote="130723433400000000" Dst="0" />
-<file name="file_model.php" server="192.186.246.118/public_html/" local="130778798607964933" remote="130778438400000000" Dst="0" />
 </dwsync>

@@ -32,21 +32,7 @@ if(is_array($messages))
 		if($sender == $client_id)
 		{
 			echo 
-			'
-			<li class="row">
-				<div class="col-xs-3">
-					<img src="'.$client_thumb.'" class="img-responsive">
-				</div>
-				
-				<div class="col-xs-9">
-					<div class="bubble-left">
-						<div>'.$client_message_details.'</div>
-						
-						<div class="message-date">'.date('jS M Y H:i a',strtotime($created)).'</div>
-					</div>
-				</div>
-			</li>
-			';
+			'<div class="message message-sent"><div class="message-text">'.$client_message_details.'</div><div class="messages-date">'.date('jS M Y',strtotime($created)).' <span>'.date('H:i a',strtotime($created)).'</span></div></div><div class="message message-sent message-pic"><div class="message-label">Delivered</div></div>';
 		}
 	}
 }

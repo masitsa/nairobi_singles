@@ -55,27 +55,19 @@
 				';
 				$like2 = '
 						<a class="btn btn-primary" href="'.site_url().'profile/like/'.$client_id.'"> 
-							<span class="add2cart"><i class="glyphicon glyphicon-heart"> </i> Like </span> 
+							<i class="fa fa-heart-o"></i> 
 						</a>
 				';
 			}
 			
 			if($account_balance > 0)
 			{
-				$actions = '
-					<span id="like_section'.$client_id.'">'.$like2.'</span>
-					<a class="btn btn-success" href="#" onclick="load_single_message(\''.$web_name.'\')"  data-toggle="modal" data-target="#single_message_modal"> 
-						<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
-					</a>
-						';
+				$actions = '<a class="btn btn-primary" href="#" onclick="like_profile(\''.$web_name.'\')"><i class="fa fa-heart-o"></i></a>';
 			}
 			
 			else
 			{
-				$actions = '
-						<a class="btn btn-warning" href="'.site_url().'credits"> 
-							<span><i class="fa fa-money"></i> Top up chatcredits </span> 
-						</a>';
+				$actions = '<a class="btn btn-warning" href="'.site_url().'credits"><span><i class="fa fa-money"></i> Top up chatcredits </span></a>';
 			}
 			$number = '';
 			//number to display per line
@@ -92,22 +84,33 @@
 			echo
 				$number.'
 					<li>
-						<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
-							<div class="row">
-								<div class="col-25" style="max-height:80px; max-width:80px; overflow:hidden;">
+						<div class="row">
+							<div class="col-25" style="max-height:80px; max-width:80px; overflow:hidden;">
+								<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
 									<img src="'.$image.'">
-								</div>
-								
-								<div class="col-75">
-									<div class="item-inner blog-list">
-										<div class="text">
-											<h4 class="title mt-5 mb-0">'.$client_username.'</h4>
-											<p>'.$age.' year old. '.$gender_name.' . Looking for '.$encounter_name.'</p>
+								</a>
+							</div>
+							
+							<div class="col-75">
+								<div class="item-inner blog-list">
+									<div class="row" style="width:100%;">
+										<div class="col-60">
+											<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
+												<div class="text">
+													<h4 class="title mt-5 mb-0">'.$client_username.'</h4>
+													<p>'.$age.' year old. '.$gender_name.' . Looking for '.$encounter_name.'</p>
+												</div>
+											</a>
+										</div>
+									
+										<div class="col-40">
+											<a class="button button-secondary" href="#" onclick="like_profile(\''.$web_name.'\')"><i class="fa fa-heart-o"></i> Like</a>
 										</div>
 									</div>
 								</div>
 							</div>
-						</a>
+						</div>
+						
 					</li>
 			';
 		}

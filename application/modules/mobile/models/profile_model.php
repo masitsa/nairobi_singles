@@ -196,7 +196,7 @@ class Profile_model extends CI_Model
 		
 		$newdata = array(
 			   'client_about'			=> $this->input->post('client_about'),
-			   'client_dob'				=> $this->input->post('client_dob3').'-'.$this->input->post('client_dob2').'-'.$this->input->post('client_dob1'),
+			   'client_dob'				=> $this->input->post('client_dob'),
 			   //'neighbourhood_id'		=> $neighbourhood_id,
 			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id'),
 			   'gender_id'				=> $this->input->post('gender_id'),

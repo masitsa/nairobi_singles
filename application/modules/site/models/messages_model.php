@@ -1,7 +1,7 @@
 <?php
 class Messages_model extends CI_Model 
 {
-	public function get_all_messages($table, $where, $per_page, $page, $limit = NULL, $order_by = 'created', $order_method = 'DESC')
+	public function get_all_messages($table, $where, $per_page, $page, $limit = NULL, $order_by = 'last_chatted', $order_method = 'DESC')
 	{
 		$this->db->from($table);
 		$this->db->select('*');

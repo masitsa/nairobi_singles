@@ -44,6 +44,16 @@
 				<!-- End: Products Menu -->
                 <li><a href="#"><i class="icon-desktop"></i> Subscriptions</a></li>
 
+                <!-- Start: Products Menu -->
+                <li>
+                    <a href="<?php echo base_url()."email-campaign";?>">
+                        <!-- Menu name with icon -->
+                        <i class="icon-th"></i> Email Campaign
+                        <!-- Icon for dropdown -->
+                    </a>
+                </li>
+				<!-- End: Products Menu -->
+
             </ul>
         </div>
     </div>

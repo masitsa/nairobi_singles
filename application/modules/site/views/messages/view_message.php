@@ -51,7 +51,8 @@
                             <input type="hidden" id="ajax_receiver" value="<?php echo $receiver_id;?>" />
                             <input type="hidden" id="prev_message_count" value="<?php echo $received_messages;?>" />
                             <?php
-							if($account_balance > 0)
+							//if($account_balance > 0)
+							if(1 > 0)
 							{
 								
 								echo form_open('site/profile/message_profile/1', array('class' => 'send_message2', 'id' => 'compose_message'));

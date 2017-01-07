@@ -61,7 +61,7 @@ else
 	';
 }
 					
-if($account_balance > 0)
+/*if($account_balance > 0)
 {
 	$actions = '
 		<div class="hide-mobile">
@@ -80,7 +80,16 @@ else
 			<a class="btn btn-warning" href="'.site_url().'credits"> 
 				<span><i class="fa fa-money"></i> Top up chatcredits </span> 
 			</a>';
-}
+}*/
+$actions = '
+	<div class="hide-mobile">
+		<span id="like_section'.$client_id.'">'.$like.'</span>
+	</div>
+	
+	<div class="show-mobile">
+		<span id="like_section'.$client_id.'">'.$like2.'</span>
+	</div>
+		';
 ?>
 
 <div class="container main-container headerOffset"> 

@@ -53,7 +53,8 @@ class Login_model extends CI_Model
 			   'created'     				=> date('Y-m-d H:i:s'),
 			   'client_password'			=> md5($this->input->post('password')),
 			   'gender_id'					=> $this->input->post('gender_id'),
-			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id')
+			   'client_looking_gender_id'	=> $this->input->post('client_looking_gender_id'),
+			   'signup_method'				=> 1
 		   );
 
 		if($this->db->insert('client', $newdata))

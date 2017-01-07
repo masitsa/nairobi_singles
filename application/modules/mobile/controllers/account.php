@@ -38,7 +38,7 @@ class Account extends MX_Controller
 		$this->load->model('login/login_model');
 		
 		//user has logged in
-		/*if($this->login_model->check_client_login())
+		if($this->login_model->check_client_login())
 		{
 			$this->load->model('admin/file_model');
 			$this->load->model('admin/users_model');
@@ -67,9 +67,9 @@ class Account extends MX_Controller
 		{
 			$this->session->set_userdata('error_message', 'Please sign up/in to continue');
 			$this->sign_in();
-		}*/
+		}
 		
-		$this->load->model('admin/file_model');
+		/*$this->load->model('admin/file_model');
 		$this->load->model('admin/users_model');
 		$this->load->model('profile_model');
 		$this->load->model('site_model');
@@ -88,7 +88,7 @@ class Account extends MX_Controller
 		$this->image_size = 600;
 		$this->thumb_size = 80;
 		$this->message_amount = $this->config->item('message_cost');
-		$this->like_amount = $this->config->item('like_cost');
+		$this->like_amount = $this->config->item('like_cost');*/
 	}
     
 	/*

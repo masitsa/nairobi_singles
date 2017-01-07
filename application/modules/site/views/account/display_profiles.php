@@ -89,7 +89,7 @@
 						';
 					}
 					
-					if($account_balance > 0)
+					/*if($account_balance > 0)
 					{
 						$actions = '
 							<div class="hide-mobile">
@@ -114,7 +114,22 @@
 								<a class="btn btn-warning" href="'.site_url().'credits"> 
 									<span><i class="fa fa-money"></i> Top up chatcredits </span> 
 								</a>';
-					}
+					}*/
+					$actions = '
+						<div class="hide-mobile">
+							<span id="like_section'.$client_id.'">'.$like.'</span>
+							<a class="btn btn-success message" client_id="'.$client_id.' "data-toggle="modal"  data-dismiss="modal" href="#send-message"> 
+								<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
+							</a>
+						</div>
+						
+						<div class="show-mobile">
+							<span id="like_section'.$client_id.'">'.$like2.'</span>
+							<a class="btn btn-success" href="'.site_url().'messages/inbox/'.$web_name.'"> 
+								<span class="add2cart"><i class="glyphicon glyphicon-envelope"> </i> Message </span> 
+							</a>
+						</div>
+							';
 					
 					//number to display per line
 					if(isset($like_section))

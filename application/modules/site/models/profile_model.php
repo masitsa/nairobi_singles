@@ -544,6 +544,7 @@ class Profile_model extends CI_Model
 	public function create_file_name($client_id, $receiver_id, $web_name = NULL)
 	{
 		//get sender web name
+		
 		$this->db->select('client_username');
 		$this->db->where('client_id', $client_id);
 		$client_query = $this->db->get('client');

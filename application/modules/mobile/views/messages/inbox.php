@@ -73,22 +73,28 @@
             echo
             '
 					<li>
-						<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
-							<div class="row" style="width:100%;">
-								<div class="col-25" style="max-height:80px; max-width:80px; overflow:hidden;">
+						<div class="row" style="width:100%;">
+							<div class="col-25" style="max-height:80px; max-width:80px; overflow:hidden;">
+								<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
 									<img src="'.$image.'">
-								</div>
-								
-								<div class="col-75">
-									<div class="item-inner blog-list">
-										<div class="text">
-											<h4 class="title mt-5 mb-0">'.$client_username.'</h4>
-											<p>'.$mini_msg.'</p>
+								</a>
+							</div>
+							
+							<div class="col-75">
+								<div class="item-inner blog-list">
+									<div class="row" style="width:100%;">
+										<div class="col-100">
+											<a class="item-link item-content" href="pages/chat.html?web_name='.$web_name.'">
+												<div class="text">
+													<h4 class="title mt-5 mb-0">'.$client_username.'</h4>
+													<p>'.$mini_msg.'</p>
+												</div>
+											</a>
 										</div>
 									</div>
 								</div>
 							</div>
-						</a>
+						</div>
 					</li>
 	            ';
         }

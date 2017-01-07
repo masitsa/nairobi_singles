@@ -10,7 +10,7 @@ class Messages extends account
 		parent:: __construct();
 	}
 	
-	public function inbox($search = '__', $order_by = 'created') 
+	public function inbox($search = '__', $order_by = 'last_chatted') 
 	{
 		$v_data['neighbourhoods_query'] = $this->profile_model->get_neighbourhoods();
 		$v_data['genders_query'] = $this->profile_model->get_gender();
@@ -34,7 +34,7 @@ class Messages extends account
 		//ordering products
 		switch ($order_by)
 		{
-			case 'created':
+			case 'last_chatted':
 				$order_method = 'DESC';
 			break;
 			

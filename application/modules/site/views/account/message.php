@@ -33,7 +33,8 @@
     </div>
     
      <?php
-	if($account_balance > 0)
+	//if($account_balance > 0)
+	if(1 > 0)
 	{
 		
     	echo form_open('site/profile/message_profile/2', array('class' => 'send_message'));

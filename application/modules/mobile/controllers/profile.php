@@ -514,13 +514,14 @@ class Profile extends account
 		/*$this->form_validation->set_rules('parent', 'Neighbourhood', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('child', 'Location', 'trim|xss_clean');*/
 		$this->form_validation->set_rules('client_about', 'About you', 'trim|required|xss_clean');
-		$this->form_validation->set_rules('client_dob1', 'Day of birth', 'trim|required|greater_than[0]|less_than[32]|xss_clean');
+		$this->form_validation->set_rules('client_dob', 'Date of birth', 'trim|required|xss_clean');
+		/*$this->form_validation->set_rules('client_dob1', 'Day of birth', 'trim|required|greater_than[0]|less_than[32]|xss_clean');
 		$this->form_validation->set_rules('client_dob2', 'Month of birth', 'trim|required|greater_than[0]|less_than[13]|xss_clean');
-		$this->form_validation->set_rules('client_dob3', 'Year of birth', 'trim|required|greater_than[1900]|less_than['.$youngest_year.']|xss_clean');
-		$this->form_validation->set_rules('client_looking_gender_id', 'For a', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('client_dob3', 'Year of birth', 'trim|required|greater_than[1900]|less_than['.$youngest_year.']|xss_clean');*/
 		$this->form_validation->set_rules('gender_id', 'I am a', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('client_looking_gender_id', 'I want a', 'trim|required|xss_clean');
 		$this->form_validation->set_rules('age_group_id', 'Aged', 'trim|required|xss_clean');
-		$this->form_validation->set_rules('encounter_id', 'Encounter type', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('encounter_id', 'For a', 'trim|required|xss_clean');
 		
 		//if form conatins invalid data
 		if ($this->form_validation->run())
@@ -541,9 +542,7 @@ class Profile extends account
 				$v_data['encounter_id'] = $row->encounter_id;
 				$v_data['current_password'] = $row->client_password;
 				$client_dob = $row->client_dob;
-				$v_data['client_dob1'] = date('d',strtotime($client_dob));
-				$v_data['client_dob2'] = date('m',strtotime($client_dob));
-				$v_data['client_dob3'] = date('Y',strtotime($client_dob));
+				$v_data['client_dob'] = date('d M, Y',strtotime($client_dob));
 			}
 			
 			else
